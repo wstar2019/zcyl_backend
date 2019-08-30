@@ -1,0 +1,63 @@
+.modal-header {
+    background-color: #06C;
+	border: medium none;
+	border-radius: 0px;
+	box-shadow: none;
+	font-family: "微软雅黑 Bold","微软雅黑 Regular","微软雅黑";
+	font-weight: 700;
+	font-style: normal;
+	font-size: 16px;
+	color: #FFF;
+	text-align:center;
+	padding: 10px;
+}
+.modal-body{
+	text-align: center;
+}
+.modal-body .item-label,
+.modal-body .item-info{
+	font-family: "微软雅黑 Bold","微软雅黑 Regular","微软雅黑";
+	font-weight: 700;
+	font-style: normal;
+	text-align: right;
+	font-size:14px;
+	padding: 10px;
+}
+.modal-body .item-value{
+	font-family: "微软雅黑";
+	font-weight: 400;
+	font-style: normal;
+	padding: 10px;
+	text-align:left;
+}
+.modal-header .close {
+    margin-top: -5px;
+    position: absolute;
+    right:10px;
+}
+.modal-footer{
+	text-align: center;
+}
+.modal-footer .btn{
+	width: 130px;
+	height:35px;
+	border: medium none;
+	border-radius: 5px;
+	box-shadow: none;
+	font-family: "微软雅黑 Bold","微软雅黑 Regular","微软雅黑";
+	font-weight: 700;
+	font-style: normal;
+	font-size: 14px;
+	margin: 0px 15px;
+}
+.modal-footer .btn-success {
+    background-color: #06E !important;
+    border-color: #06E;
+    color: white;
+    
+}
+.modal-footer .btn-default {
+    background-color: white !important;
+    border: black solid 1px;
+	color: black !important;
+}

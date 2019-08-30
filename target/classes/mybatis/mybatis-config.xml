@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD SQL Map Config 3.0//EN"  
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<settings> 
+        <setting name="cacheEnabled" value="true" />   
+        <setting name="useGeneratedKeys" value="true" /> 
+        <setting name="defaultExecutorType" value="REUSE" /> 
+    </settings>
+
+	<typeAliases>
+	    <typeAlias type="com.bjzcyl.util.PageData" alias="pd"/>
+	    
+	    <typeAlias type="com.bjzcyl.entity.system.SysRole" alias="SysRole"/>
+		<typeAlias type="com.bjzcyl.entity.system.Menus" alias="Menus"/>	
+		<typeAlias type="com.bjzcyl.entity.Page" alias="Page"/>
+		
+		<typeAlias type="com.bjzcyl.entity.system.Const" alias="Const"/>
+		<typeAlias type="com.bjzcyl.entity.system.SysCustomer" alias="SysCustomer"/>
+		<typeAlias type="com.bjzcyl.entity.system.SysManager" alias="SysManager"/>
+		<typeAlias type="com.bjzcyl.entity.system.SysBackup" alias="SysBackup"/>
+		<typeAlias type="com.bjzcyl.entity.system.SysLog" alias="SysLog"/>
+		<typeAlias type="com.bjzcyl.entity.system.SysPermission" alias="SysPermission"/>
+		<typeAlias type="com.bjzcyl.entity.system.SysMsgTemplate" alias="SysMsgTemplate"/>
+		<typeAlias type="com.bjzcyl.entity.system.SysNotiTemplate" alias="SysNotiTemplate"/>
+		
+		<typeAlias type="com.bjzcyl.entity.system.KPSituation" alias="KPSituation"/>
+		<typeAlias type="com.bjzcyl.entity.system.KPNews" alias="KPNews"/>
+		
+		<typeAlias type="com.bjzcyl.entity.system.TourOption" alias="TourOption"/>
+		<typeAlias type="com.bjzcyl.entity.system.TourOptionValue" alias="TourOptionValue"/>
+		<typeAlias type="com.bjzcyl.entity.system.TourArticle" alias="TourArticle"/>
+		<typeAlias type="com.bjzcyl.entity.system.TourArticleOption" alias="TourArticleOption"/>
+		<typeAlias type="com.bjzcyl.entity.system.TourBooking" alias="TourBooking"/>
+		<typeAlias type="com.bjzcyl.entity.system.TourBookingLog" alias="TourBookingLog"/>
+		<typeAlias type="com.bjzcyl.entity.system.TourFeedback" alias="TourFeedback"/>
+		<typeAlias type="com.bjzcyl.entity.system.TourSliding" alias="TourSliding"/>
+		
+		<typeAlias type="com.bjzcyl.entity.system.SAClass" alias="SAClass"/>
+		<typeAlias type="com.bjzcyl.entity.system.SAOption" alias="SAOption"/>
+		<typeAlias type="com.bjzcyl.entity.system.SAOptionValue" alias="SAOptionValue"/>
+		<typeAlias type="com.bjzcyl.entity.system.SAArticle" alias="SAArticle"/>
+		<typeAlias type="com.bjzcyl.entity.system.SAArticleOption" alias="SAArticleOption"/>
+		<typeAlias type="com.bjzcyl.entity.system.SABooking" alias="SABooking"/>
+		<typeAlias type="com.bjzcyl.entity.system.SABookingLog" alias="SABookingLog"/>
+		<typeAlias type="com.bjzcyl.entity.system.SAFeedback" alias="SAFeedback"/>
+		<typeAlias type="com.bjzcyl.entity.system.SASliding" alias="SASliding"/>
+		
+		<typeAlias type="com.bjzcyl.entity.system.SPClass" alias="SPClass"/>
+		<typeAlias type="com.bjzcyl.entity.system.SPOption" alias="SPOption"/>
+		<typeAlias type="com.bjzcyl.entity.system.SPOptionValue" alias="SPOptionValue"/>
+		<typeAlias type="com.bjzcyl.entity.system.SPArticle" alias="SPArticle"/>
+		<typeAlias type="com.bjzcyl.entity.system.SPArticleOption" alias="SPArticleOption"/>
+		<typeAlias type="com.bjzcyl.entity.system.SPBooking" alias="SPBooking"/>
+		<typeAlias type="com.bjzcyl.entity.system.SPBookingLog" alias="SPBookingLog"/>
+		<typeAlias type="com.bjzcyl.entity.system.SPFeedback" alias="SPFeedback"/>
+		<typeAlias type="com.bjzcyl.entity.system.SPSliding" alias="SPSliding"/>
+		
+		<typeAlias type="com.bjzcyl.entity.system.FPSliding" alias="FPSliding"/>
+		<typeAlias type="com.bjzcyl.entity.system.FPSpecial" alias="FPSpecial"/>
+		<typeAlias type="com.bjzcyl.entity.system.FPArt" alias="FPArt"/>
+		<typeAlias type="com.bjzcyl.entity.system.FPTour" alias="FPTour"/>
+	
+		<typeAlias type="com.bjzcyl.entity.client.Traveler" alias="Traveler"/>
+		
+	</typeAliases>
+	
+	<plugins>
+		<plugin interceptor="com.bjzcyl.plugin.PagePlugin">
+			<property name="dialect" value="mysql"/>
+			<property name="pageSqlId" value=".*listPage.*"/>
+		</plugin>
+	</plugins>
+	
+</configuration>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TourOptionMapper">
+
+	<resultMap type="TourOption" id="tourOptionResultMap">
+		<id column="ID" property="ID"/>
+		<result column="NAME" property="NAME"/>		
+		<result column="COMMENT" property="COMMENT"/>
+		<result column="STATE" property="STATE"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		tour_option
+	</sql>	
+	
+	<sql id="Field">
+		ID,
+		NAME,
+		COMMENT,
+		STATE		
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{COMMENT},
+		#{STATE}
+	</sql>
+	
+	<select id="touroptionlistPage" parameterType="page" resultType="pd" >
+		select  t.ID,
+				t.NAME,
+				t.COMMENT,
+				t.STATE
+		from <include refid="tableName"></include> t WHERE 1=1 
+		<if test="pd.keywords!= null and pd.keywords != ''">
+			AND t.NAME LIKE CONCAT(CONCAT('%', #{pd.keywords}), '%')					 
+		</if>		
+		order by t.NAME
+	</select>
+	<select id="listAllTourOption" parameterType="pd" resultType="pd" >
+		select  t.ID,
+				t.NAME,
+				t.COMMENT,
+				t.STATE
+		from <include refid="tableName"></include> t WHERE 1=1 		
+		order by t.NAME
+	</select>
+	<select id="findById" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			ID = #{ID}
+	</select>
+	<select id="findByMid" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			ID = #{pd.MID}
+	</select>
+	<select id="findByName" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			NAME = #{NAME}
+	</select>
+	<insert id="saveOpt" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) values (
+			UUID(),
+			#{NAME},
+			#{COMMENT},
+			#{STATE}
+		)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="editOpt" parameterType="pd" >
+		update  <include refid="tableName"></include>
+			set 
+				NAME = #{NAME},
+				COMMENT = #{COMMENT}			
+			where 
+				ID = #{ID}
+	</update>
+	<update id="changeStateOpt" parameterType="pd" >
+		update  <include refid="tableName"></include>
+			set 
+				STATE = #{STATE}			
+			where 
+				ID = #{ID}
+	</update>
+	
+	<delete id="deleteOpt" parameterType="pd" flushCache="false">
+		delete from <include refid="tableName"></include>
+		where 
+			ID = #{ID}
+	</delete>
+	
+	<delete id="deleteAllOpt" parameterType="String" >
+		delete from <include refid="tableName"></include>
+		where 
+			ID in
+  			 <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                  #{item}
+             </foreach>
+	</delete>
+	
+	<select id="getTourOptionCount" parameterType="String" resultType="pd">
+		select 
+			count(ID) optCount
+		from 
+		<include refid="tableName"></include>
+	</select>
+	
+</mapper>

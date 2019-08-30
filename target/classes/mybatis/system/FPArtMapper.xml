@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FPArtMapper">
+	
+	<resultMap type="FPArt" id="FPArtMap">
+		<id column="ID" property="ID"/>
+		<result column="ART_ID" property="ART_ID"/>
+		<result column="SALE_QUANTITY" property="SALE_QUANTITY"/>
+		<result column="SALE_AMOUNT" property="SALE_AMOUNT"/>
+		<result column="VIEW_NUM" property="VIEW_NUM"/>
+		<result column="VIEW_STATE" property="VIEW_STATE"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		FP_ART
+	</sql>
+	
+	<sql id="Field">
+		ID,
+		ART_ID,
+		SALE_QUANTITY,
+		SALE_AMOUNT,
+		VIEW_NUM,
+		VIEW_STATE		
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{ART_ID},
+		#{SALE_QUANTITY},
+		#{SALE_AMOUNT},
+		#{VIEW_NUM},
+		#{VIEW_STATE}
+	</sql>	
+	
+	<select id="fpartlistPage" parameterType="page" resultType="pd" >
+	    SELECT `fp_art`.*, `sa_article`.name AS `ART_NAME`
+		FROM `fp_art` 
+		INNER JOIN `sa_article` ON `fp_art`.ART_ID = `sa_article`.ID 
+		ORDER BY `fp_art`.VIEW_STATE DESC
+	</select>	
+	<select id="fpArtAll" parameterType="pd" resultType="pd" >
+		SELECT  *				
+		FROM <include refid="tableName"></include> WHERE `fp_art`.`VIEW_STATE` = '1'
+		ORDER BY `fp_art`.`VIEW_NUM` DESC
+	</select>
+	<select id="getFPArt" parameterType="pd" resultType="pd" >
+		SELECT `sa_article`.id, `sa_article`.name, `sa_article`.comment, `sa_article`.price, `sa_article`.main_image				
+		FROM `fp_art` INNER JOIN `sa_article` ON `fp_art`.ART_ID = `sa_article`.ID
+		WHERE `fp_art`.`VIEW_STATE` = '1'
+		ORDER BY `fp_art`.`VIEW_NUM` DESC LIMIT 7 
+	</select>
+	<select id="hasFPArt" parameterType="pd" resultType="pd" >
+		SELECT * FROM <include refid="tableName"></include> WHERE `ART_ID` = #{ART_ID}
+	</select>
+	<update id="updateFPArt" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET SALE_QUANTITY = #{SALE_QUANTITY},
+				SALE_AMOUNT   = #{SALE_AMOUNT}	
+			WHERE 
+				ID = #{ID}
+	</update>
+	<update id="updateFPArtViewNum" parameterType="pd" >
+		UPDATE <include refid="tableName"></include> SET `VIEW_NUM` = #{VIEW_NUM} WHERE `ID` = #{ID}
+	</update>
+	<update id="updateFPArtViewState" parameterType="pd" >
+		UPDATE <include refid="tableName"></include> SET `VIEW_STATE` = #{VIEW_STATE} WHERE `ID` = #{ID}
+	</update>
+	
+	<insert id="saveFPArt" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include> (
+			ID, ART_ID
+		) VALUES (
+			#{ID},
+			#{ART_ID}
+		)
+	</insert>
+	
+	<delete id="deleteFPArt" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE `ART_ID` = #{ART_ID}
+	</delete>
+</mapper>

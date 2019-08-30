@@ -1,0 +1,12 @@
+.btn-primary{
+    width: 130px;
+    height: 35px;
+    background-color: #06F;
+    border: medium none;
+    border-radius: 5px;
+    box-shadow: none;
+    font-family: "微软雅黑 Bold","微软雅黑 Regular","微软雅黑";
+    font-weight: 700;
+    font-style: normal;
+    font-size: 14px;
+}

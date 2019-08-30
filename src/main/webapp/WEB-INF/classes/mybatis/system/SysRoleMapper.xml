@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysRoleMapper">
+	
+	<resultMap type="SysRole" id="RoleMap">
+		<id column="ID" property="ID"/>
+		<result column="ROLE_NAME" property="ROLE_NAME"/>
+		<result column="ROLE_ENG_NAME" property="ROLE_ENG_NAME"/>
+		<result column="ROLE_COMMENT" property="ROLE_COMMENT"/>
+		<result column="ROLE_STATE" property="ROLE_STATE"/>
+		<result column="ROLE_DT" property="ROLE_DT"/>
+		<result column="ROLE_MENU_PERMISSION" property="ROLE_MENU_PERMISSION"/>	
+		<result column="ROLE_MENU_IDS" property="ROLE_MENU_IDS"/>
+		
+	</resultMap>
+	
+	<sql id="tableName">
+		sys_role
+	</sql>
+	
+	<sql id="Field">
+		ID,
+		ROLE_NAME,
+		ROLE_ENG_NAME,
+		ROLE_STATE,
+		ROLE_DT,
+		ROLE_MENU_PERMISSION,
+		ROLE_MENU_IDS,
+		ROLE_COMMENT
+	</sql>
+	
+	<sql id="FieldValue">		
+		#{ID},
+		#{ROLE_NAME},
+		#{ROLE_ENG_NAME},
+		#{ROLE_STATE},
+		#{ROLE_DT},
+		#{ROLE_MENU_PERMISSION},
+		#{ROLE_MENU_IDS},
+		#{ROLE_COMMENT}
+	</sql>	
+	
+	<select id="rolelistPage" parameterType="page" resultType="pd" >
+		SELECT * FROM `sys_role` ORDER BY `ROLE_ENG_NAME`
+	</select>
+	<select id="roleList" parameterType="page" resultType="pd" >
+		SELECT `id`, `role_name` FROM `sys_role` WHERE `role_state` = 1 ORDER BY `ROLE_ENG_NAME`;
+	</select>
+	<insert id="saveRole" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES (
+			#{ID},
+			#{ROLE_NAME},
+			#{ROLE_ENG_NAME},
+			#{ROLE_STATE},
+			#{ROLE_DT},
+			#{ROLE_MENU_PERMISSION},
+			#{ROLE_MENU_IDS},
+			#{ROLE_COMMENT}
+		)
+	</insert>
+	
+	<delete id="deleteRole" parameterType="pd" flushCache="false">
+		DELETE from <include refid="tableName"></include>
+		WHERE 
+			ID = #{ID}
+	</delete>
+	
+	<update id="updateRole" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET 
+				<if test="ROLE_NAME != null and ROLE_NAME != ''">
+					ROLE_NAME = #{ROLE_NAME},
+				</if>
+				<if test="ROLE_ENG_NAME != null and ROLE_ENG_NAME != ''">
+					ROLE_ENG_NAME = #{ROLE_ENG_NAME},
+				</if>
+				<if test="ROLE_STATE != null and ROLE_STATE != ''">
+					ROLE_STATE = #{ROLE_STATE},
+				</if>
+				<if test="ROLE_DT != null and ROLE_DT != ''">
+					ROLE_DT = #{ROLE_DT},
+				</if>
+				<if test="ROLE_MENU_PERMISSION != null and ROLE_MENU_PERMISSION != ''">
+					ROLE_MENU_PERMISSION = #{ROLE_MENU_PERMISSION},
+				</if>
+				<if test="ROLE_MENU_IDS != null and ROLE_MENU_IDS != ''">
+					ROLE_MENU_IDS = #{ROLE_MENU_IDS},
+				</if>
+				<if test="ROLE_COMMENT != null and ROLE_COMMENT != ''">
+					ROLE_COMMENT = #{ROLE_COMMENT},
+				</if>
+					ID =  #{ID}
+			WHERE 
+				ID = #{ID}
+	</update>
+	
+	<select id="getRolesById" parameterType="pd" resultType="pd">
+		SELECT <include refid="Field"></include> FROM
+		<include refid="tableName"></include>
+		WHERE 1=1
+		<if test="ROLE_ID!=null">
+		AND ID = #{ROLE_ID}
+		</if>
+		
+	</select>
+</mapper>

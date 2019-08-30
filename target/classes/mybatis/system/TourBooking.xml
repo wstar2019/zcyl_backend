@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TourBookingMapper">
+
+	<resultMap type="TourBooking" id="tourBookingResultMap">
+		<id column="ID" property="ID"/>
+		<result column="USER_ID" property="USER_ID"/>		
+		<result column="ARTICLE_ID" property="ARTICLE_ID"/>
+		<result column="ADULT_NUM" property="ADULT_NUM"/>
+		<result column="CHILD_NUM" property="CHILD_NUM"/>
+		<result column="TOTAL_EXPENSE" property="TOTAL_EXPENSE"/>
+		<result column="REQUEST_DATE" property="REQUEST_DATE"/>
+		<result column="START_DATE" property="START_DATE"/>
+		<result column="BOOKING_STATE" property="BOOKING_STATE"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		tour_booking
+	</sql>	
+	
+	<sql id="Field">
+		ID,
+		USER_ID,
+		ARTICLE_ID,
+		ADULT_NUM,
+		CHILD_NUM,
+		TOTAL_EXPENSE,
+		REQUEST_DATE,
+		START_DATE,
+		BOOKING_STATE
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{USER_ID},
+		#{ARTICLE_ID},
+		#{ADULT_NUM},
+		#{CHILD_NUM},
+		#{TOTAL_EXPENSE},
+		#{REQUEST_DATE},
+		#{START_DATE},
+		#{BOOKING_STATE}
+	</sql>
+	
+	<insert id="insertBooking" parameterType="pd">
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES (
+			#{ID},
+			#{USER_ID},
+			#{ARTICLE_ID},
+			#{ADULT_NUM},
+			#{CHILD_NUM},
+			#{TOTAL_EXPENSE},
+			#{REUEST_DATE},
+			#{START_DATE},
+			#{BOOKING_STATE}
+		)
+	</insert>
+	
+	<select id="tourbookinglistPage" parameterType="page" resultType="pd" >
+	    
+	    SELECT 
+	    	`tour_booking`.id,
+			`sys_customer`.name AS customer,
+			`tour_booking`.request_date, 
+			`tour_booking`.start_date,
+			`const_list`.const_name AS booking_state
+		FROM
+			`tour_booking`
+		LEFT JOIN `sys_customer` ON `tour_booking`.user_id = `sys_customer`.id
+		LEFT JOIN `const_list` ON `tour_booking`.booking_state = `const_list`.const_value
+		WHERE 1 = 1 AND `const_list`.const_type = 'booking_state'
+		<if test="pd.USER_NAME != null and pd.USER_NAME != ''">
+			AND `sys_customer`.NAME LIKE CONCAT(CONCAT('%', #{pd.USER_NAME}), '%')					 
+		</if>
+		<if test="pd.B_STATE != null and pd.B_STATE != ''">
+			AND `tour_booking`.booking_state = #{pd.B_STATE}					 
+		</if>
+		<if test="pd.SS_TIME != null and pd.SS_TIME != ''">
+			AND `tour_booking`.START_DATE &gt; #{pd.SS_TIME}					 
+		</if>
+		<if test="pd.SE_TIME != null and pd.SE_TIME != ''">
+			AND `tour_booking`.START_DATE &lt; #{pd.SE_TIME}					 
+		</if>
+		<if test="pd.RS_TIME != null and pd.RS_TIME != ''">
+			AND `tour_booking`.REQUEST_DATE &gt; #{pd.RS_TIME}					 
+		</if>
+		<if test="pd.RE_TIME != null and pd.RE_TIME != ''">
+			AND `tour_booking`.REQUEST_DATE &lt; #{pd.RE_TIME}					 
+		</if>
+		<if test="pd.ART_ID != null and pd.ART_ID != ''">
+			AND `tour_booking`.article_id = #{pd.ART_ID} 					 
+		</if>
+		ORDER BY `tour_booking`.REQUEST_DATE ASC
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd" >
+	    SELECT 
+	    	`tour_booking`.id,
+			`sys_customer`.name AS user_name,
+			`sys_customer`.email AS user_email,
+			`sys_customer`.tel AS user_phone,
+			`tour_article`.name AS art_name,
+			`tour_article`.description AS art_desc,
+			`tour_article`.adult_expense AS a_exp,
+			`tour_article`.child_expense AS c_exp,
+			`tour_booking`.adult_num, 
+			`tour_booking`.child_num, 
+			`tour_booking`.start_date,
+			`tour_booking`.total_expense,
+			`tour_booking`.booking_state AS cur_state,
+			`const_list`.const_name AS booking_state
+		FROM
+			`tour_booking`
+		LEFT JOIN `sys_customer` ON `tour_booking`.user_id = `sys_customer`.id
+		LEFT JOIN `tour_article` ON `tour_booking`.article_id = `tour_article`.id
+		LEFT JOIN `const_list` ON `tour_booking`.booking_state = `const_list`.const_value
+		WHERE 1 = 1
+		AND `tour_booking`.id = #{ID} AND `const_list`.const_type = 'booking_state'
+	</select>
+	<update id="updateBookingState" parameterType="pd" >
+		UPDATE `tour_booking` SET `booking_state`=#{BOOKING_STATE} WHERE `id` = #{ID}
+	</update>
+	
+</mapper>

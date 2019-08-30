@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+        version="2.1">
+
+    <tlib-version>2.0</tlib-version>
+    <short-name>myshortname</short-name>
+    <uri>http://hengye.com</uri>
+    
+    <function>
+        <name>thumbPath</name>
+        <function-class>com.bjzcyl.tag.MyTag</function-class>
+        <function-signature>java.lang.String getThumbPath(java.lang.String)</function-signature>
+    </function>
+    
+    <!-- Invoke 'Generate' action to add tags or functions -->
+    <tag>
+        <name>img</name>
+        <tag-class>com.bjzcyl.tag.MyTag</tag-class>
+        <attribute>
+            <name>class</name>
+        </attribute>
+        <attribute>
+            <name>id</name>
+        </attribute>
+        <attribute>
+            <name>style</name>
+        </attribute>
+        <attribute>
+            <name>ngSrc</name>
+            <fragment>true</fragment>
+        </attribute>
+        <attribute>
+            <name>onclick</name>
+            <fragment>true</fragment>
+        </attribute>
+        <attribute>
+            <name>width</name>
+        </attribute>
+        <attribute>
+            <name>height</name>
+        </attribute>
+        <attribute>
+            <name>src</name>
+            <fragment>true</fragment>
+        </attribute>
+        <body-content>scriptless</body-content>
+    </tag>
+</taglib>

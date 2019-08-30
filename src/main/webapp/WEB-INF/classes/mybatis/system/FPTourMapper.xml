@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FPTourMapper">
+	
+	<resultMap type="FPTour" id="FPTourMap">
+		<id column="ID" property="ID"/>
+		<result column="TOUR_ID" property="TOUR_ID"/>
+		<result column="SALE_QUANTITY" property="SALE_QUANTITY"/>
+		<result column="SALE_AMOUNT" property="SALE_AMOUNT"/>
+		<result column="VIEW_NUM" property="VIEW_NUM"/>
+		<result column="VIEW_STATE" property="VIEW_STATE"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		FP_TOUR
+	</sql>
+	
+	<sql id="Field">
+		ID,
+		TOUR_ID,
+		SALE_QUANTITY,
+		SALE_AMOUNT,
+		VIEW_NUM,
+		VIEW_STATE		
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{TOUR_ID},
+		#{SALE_QUANTITY},
+		#{SALE_AMOUNT},
+		#{VIEW_NUM},
+		#{VIEW_STATE}
+	</sql>	
+	
+	<select id="fptourlistPage" parameterType="page" resultType="pd" >
+	    SELECT `fp_tour`.*, `tour_article`.name AS `TOUR_NAME`
+		FROM `fp_tour` 
+		INNER JOIN `tour_article` ON `fp_tour`.TOUR_ID = `tour_article`.ID 
+		ORDER BY `fp_tour`.VIEW_STATE DESC
+	</select>	
+	<select id="fpTourAll" parameterType="pd" resultType="pd" >
+		SELECT  *				
+		FROM <include refid="tableName"></include> WHERE `fp_tour`.`VIEW_STATE` = '1'
+		ORDER BY `fp_tour`.`VIEW_NUM` DESC
+	</select>
+	<select id="getFPTour" parameterType="pd" resultType="pd" >
+		SELECT
+			`tour_article`.id,
+			`tour_article`.name,
+			<!-- CONCAT(SUBSTRING(`tour_article`.description, 1, 20),'...') as description, -->
+			`tour_article`.description,
+			`tour_article`.adult_expense,
+			`tour_article`.child_expense,
+			`tour_article`.main_image				
+		FROM `fp_tour` INNER JOIN `tour_article` ON `fp_tour`.TOUR_ID = `tour_article`.ID
+		WHERE `fp_tour`.`VIEW_STATE` = '1'
+		ORDER BY `fp_tour`.`VIEW_NUM` DESC LIMIT 7 
+	</select>
+	<select id="hasFPTour" parameterType="pd" resultType="pd" >
+		SELECT * FROM <include refid="tableName"></include> WHERE `TOUR_ID` = #{TOUR_ID}
+	</select>
+	<update id="updateFPTour" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET SALE_QUANTITY = #{SALE_QUANTITY},
+				SALE_AMOUNT   = #{SALE_AMOUNT}	
+			WHERE 
+				ID = #{ID}
+	</update>
+	<update id="updateFPTourViewNum" parameterType="pd" >
+		UPDATE <include refid="tableName"></include> SET `VIEW_NUM` = #{VIEW_NUM} WHERE `ID` = #{ID}
+	</update>
+	<update id="updateFPTourViewState" parameterType="pd" >
+		UPDATE <include refid="tableName"></include> SET `VIEW_STATE` = #{VIEW_STATE} WHERE `ID` = #{ID}
+	</update>
+	
+	<insert id="saveFPTour" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include> (
+			ID, TOUR_ID
+		) VALUES (
+			#{ID},
+			#{TOUR_ID}
+		)
+	</insert>
+	
+	<delete id="deleteFPTour" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE `TOUR_ID` = #{TOUR_ID}
+	</delete>
+</mapper>

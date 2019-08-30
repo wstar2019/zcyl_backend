@@ -1,0 +1,139 @@
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+    font-family: "微软雅黑";
+	font-weight: 400;
+	font-style: normal;
+	font-size: 14px;
+	text-align: center;
+	border: 1px solid #DDD;
+	vertical-align: middle;
+}
+
+.ipt-td{
+	padding:3px;
+	text-align:center;
+}
+ .form-group .control-value{
+ 	padding: 7px;
+ }
+.main-container{
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    top: 125px;
+    min-height:400px;
+    overflow: auto;
+}
+
+.no-skin .sidebar-toggle {
+    background-color: #f3f3f3;
+    border-color: #e0e0e0;
+}
+
+html, body{
+	height: 100%;
+	width: 100%;
+	margin: 0px;
+	overflow: hidden;
+	position:absolute;
+	top:0px;
+	bottom:0px;
+}
+
+#navbar{
+	height: 125px;
+	position: fixed;
+	width: 100%;	
+}
+
+.sidebar{
+	width: 190px; position: absolute; top: 125px; bottom: 0px;overflow: auto;
+    overflow-x: hidden;
+}
+.sidebar.menu-min{
+	width: 59px;
+}
+.sidebar.menu-min .nav-list > li > a {
+    padding-left: 15px;
+}
+.sidebar .nav-list > li .submenu > li > .active,
+.no-skin .nav-list > li > .submenu li > .submenu > li .active{
+	color:#ffffff;
+	background-color:#0080ff;
+}
+
+
+#content{
+	position: absolute;
+	top: 125px;
+	bottom: 0px;
+	left: 190px;
+	right: 0px;
+}
+.menu-min-body #content{
+	left: 59px;
+}
+.page-header{
+	position: absolute;
+	height: 40px;
+	width: 100%;
+	top: 0px;	
+}
+.page-content{
+	position: absolute;
+	width: 100%;
+	bottom: 0px;
+	top: 40px;
+	overflow: auto;
+}
+.class_row>.vcol1{
+	text-align:left !important;
+}
+.row_1>.vcol1{
+	padding-left:28px;
+}
+.row_2>.vcol1{
+	padding-left:56px;
+}
+.row_3>.vcol1{
+	padding-left:84px;
+}
+.row_4>.vcol1{
+	padding-left:112px;
+}
+.btn-group .btn-white{
+	color: #2283C5 !important;
+}
+.btn-group > .btn{
+    float: inherit !important;
+}
+.item-row{
+	float:left;
+	width:100%;
+}
+.item-label, .item-value{
+	width: 50%;
+	float:left;
+}
+.item-label{
+	text-align: right;
+}
+.item-value{
+	text-align: left;
+}
+.item-info{
+	text-align:center !important;
+}
+.bootbox  .modal-body{
+	padding: 10px !important;
+}
+.pagination {
+	margin-bottom:0px;
+}
+.form-group {
+    margin-bottom: 5px;
+}

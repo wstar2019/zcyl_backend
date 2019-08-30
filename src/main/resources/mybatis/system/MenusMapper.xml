@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MenusMapper">
+	
+	<resultMap type="Menus" id="MenusMap">
+		<id column="MENU_ID" property="MENU_ID"/>
+		<result column="MENU_NAME" property="MENU_NAME"/>
+		<result column="MENU_URL" property="MENU_URL"/>
+		<result column="PARENT_ID" property="PARENT_ID"/>
+		<result column="MENU_ORDER" property="MENU_ORDER"/>
+		<result column="MENU_ICON" property="MENU_ICON"/>
+		<result column="MENU_STATE" property="MENU_STATE"/>
+		<result column="MENU_TARGET" property="MENU_TARGET"/>
+		<result column="MENU_PERMISION" property="MENU_PERMISION"/>
+		<result column="MENU_COMMENT" property="MENU_COMMENT"/>		
+	</resultMap>
+	
+	<!--表名 -->
+	<sql id="tableName">
+		MENUS
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		MENU_ID,
+		MENU_NAME,
+		MENU_URL,
+		PARENT_ID,
+		MENU_ORDER,
+		MENU_ICON,
+		MENU_STATE,
+		MENU_TARGET,
+		MENU_PERMISION,
+		MENU_COMMENT		
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{ID},
+		#{MENU_ID},
+		#{MENU_NAME},
+		#{MENU_URL},
+		#{PARENT_ID},
+		#{MENU_ORDER},
+		#{MENU_ICON},
+		#{MENU_STATE},
+		#{MENU_TARGET},
+		#{MENU_PERMISION},
+		#{MENU_COMMENT
+	</sql>	
+	
+	<select id="find" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 1 = 1 
+			AND MENU_NAME = #{MENU_NAME}
+			AND PARENT_ID = #{PARENT_ID}
+			<if test="PKID != null and PKID != ''">
+			and MENU_ID != #{PKID}
+			</if>
+	</select>
+	
+	<select id="MenuslistPage" parameterType="page" resultType="pd" >
+		SELECT  c.MENU_ID,
+				c.MENU_NAME,
+				c.MENU_URL,
+				c.PARENT_ID,
+				(SELECT m.MENU_NAME FROM menus m WHERE m.MENU_ID = c.PARENT_ID) PARENT_NAME,
+				c.MENU_ORDER,
+				c.MENU_ICON,
+				c.MENU_STATE,
+				c.MENU_TARGET,
+				c.MENU_PERMISION,
+				c.MENU_COMMENT				
+		FROM <include refid="tableName"></include> c 	
+		WHERE 1 = 1 AND c.MENU_STATE = 1	
+		order by c.MENU_ORDER
+	</select>	
+	
+	<select id="getMenusByUpperId" parameterType="pd" resultType="pd" >
+		SELECT  c.MENU_ID,
+				c.MENU_NAME,
+				c.MENU_URL,
+				c.PARENT_ID,
+				(SELECT m.MENU_NAME FROM menus m WHERE m.MENU_ID = c.PARENT_ID) PARENT_NAME,
+				c.MENU_ORDER,
+				c.MENU_ICON,
+				c.MENU_STATE,
+				c.MENU_TARGET,
+				c.MENU_PERMISION,
+				c.MENU_COMMENT
+		FROM <include refid="tableName"></include> c
+				
+		WHERE c.PARENT_ID = #{PARENT_ID}
+		order by c.MENU_ORDER
+	</select>
+		
+	<select id="getMenuString" parameterType="String" resultType="pd">
+		SELECT
+			p.`MENU_NAME` as PM,
+			c.`MENU_NAME` as CM
+		FROM `menus` as c
+		LEFT JOIN `menus` as p on c.`parent_id` = p.`menu_id`
+		WHERE c.`MENU_URL` = #{Url}
+	</select>
+	
+	<select id="listSubMenuByParentId" parameterType="String" resultMap="MenusMap">
+		SELECT  c.MENU_ID,
+				c.MENU_NAME,
+				c.MENU_URL,
+				c.PARENT_ID,
+				(SELECT m.MENU_NAME FROM menus m WHERE m.MENU_ID = c.PARENT_ID) PARENT_NAME,
+				c.MENU_ORDER,
+				c.MENU_ICON,
+				c.MENU_STATE,
+				c.MENU_TARGET,
+				c.MENU_PERMISION,
+				c.MENU_COMMENT
+		FROM <include refid="tableName"></include> c
+				
+		WHERE c.PARENT_ID = #{PARENT_ID} AND c.MENU_STATE = 1
+		order by c.MENU_ORDER
+	</select>
+	
+	<select id="getAllMenusList" parameterType="pd" resultType="pd" >
+		SELECT  c.MENU_ID,
+				c.MENU_NAME,
+				c.MENU_URL,
+				c.PARENT_ID,
+				(SELECT m.MENU_NAME FROM menus m WHERE m.MENU_ID = c.PARENT_ID) PARENT_NAME,
+				c.MENU_ORDER,
+				c.MENU_ICON,
+				c.MENU_STATE,
+				c.MENU_TARGET,
+				c.MENU_PERMISION,
+				c.MENU_COMMENT				
+		FROM <include refid="tableName"></include> c 		
+		order by c.MENU_ORDER
+	</select>
+		
+	<update id="updateMenus" parameterType="pd" >
+		update  <include refid="tableName"></include>
+			set MENU_NAME				= #{MENU_NAME},
+				MENU_URL 				= #{MENU_URL},
+				PARENT_ID 				= #{PARENT_ID},
+				MENU_ORDER				= #{MENU_ORDER},
+				MENU_ICON				= #{MENU_ICON},
+				MENU_STATE				= #{MENU_STATE},
+				MENU_TARGET			    = #{MENU_TARGET},
+				MENU_PERMISION			= #{MENU_PERMISION},
+				MENU_COMMENT			= #{MENU_COMMENT}				
+			WHERE 
+				MENU_ID = #{MENU_ID}
+	</update>
+	
+	<insert id="saveMenus" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) values (
+			#{MENU_ID},
+			#{MENU_NAME},
+			#{MENU_URL},
+			#{PARENT_ID},
+			#{MENU_ORDER},
+			#{MENU_ICON},
+			#{MENU_STATE},
+			#{MENU_TARGET},
+			#{MENU_PERMISION},
+			#{MENU_COMMENT}
+		)
+	</insert>
+	
+	<delete id="deleteMenus" parameterType="pd" flushCache="false">
+		delete from <include refid="tableName"></include>
+		where 
+			MENU_ID = #{MENU_ID}
+	</delete>
+</mapper>

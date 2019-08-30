@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SPArticleMapper">
+
+	<resultMap type="SPArticle" id="SPArticleResultMap">
+		<id column="ID" property="ID"/>
+		<result column="NAME" property="NAME"/>		
+		<result column="SP_CLASS" property="SP_CLASS"/>
+		<result column="COMMENT" property="COMMENT"/>
+		<result column="PRICE" property="PRICE"/>
+		<result column="MAIN_IMAGE" property="MAIN_IMAGE"/>
+		<result column="DETAIL_IMAGE" property="DETAIL_IMAGE"/>
+		<result column="SERVICE_FEATURE" property="SERVICE_FEATURE"/>
+		<result column="DESCRIPTION" property="DESCRIPTION"/>
+		<result column="SIZE_PACKING" property="SIZE_PACKING"/>
+		<result column="PURCHASE_URL" property="PURCHASE_URL"/>
+		<result column="VIEW_STATE" property="VIEW_STATE"/>
+		<result column="SALE_STATE" property="SALE_STATE"/>
+		<result column="REGISTER" property="REGISTER"/>
+		<result column="REGIST_TIME" property="REGIST_TIME"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		sp_article
+	</sql>	
+	
+	<sql id="Field">
+		ID,
+		NAME,
+		SP_CLASS,
+		COMMENT,
+		PRICE,
+		MAIN_IMAGE,
+		DETAIL_IMAGE,
+		SERVICE_FEATURE,
+		DESCRIPTION,
+		SIZE_PACKING,
+		PURCHASE_URL,
+		VIEW_STATE,
+		SALE_STATE,
+		REGISTER,
+		REGIST_TIME
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{SP_CLASS},
+		#{COMMENT},
+		#{PRICE},
+		#{MAIN_IMAGE},
+		#{DETAIL_IMAGE},
+		#{SERVICE_FEATURE},
+		#{DESCRIPTION},
+		#{SIZE_PACKING},
+		#{PURCHASE_URL},
+		#{VIEW_STATE},
+		#{SALE_STATE},
+		#{REGISTER},
+		#{REGIST_TIME}
+	</sql>
+	
+	<select id="articlelistPage" parameterType="page" resultType="pd" >
+		SELECT  t.ID,
+				t.NAME,
+				t.COMMENT,
+				t.REGIST_TIME
+		FROM <include refid="tableName"></include> t WHERE 1=1 
+		<if test="pd.NAME!= null and pd.NAME != ''">
+			AND t.NAME LIKE CONCAT(CONCAT('%', #{pd.NAME}), '%')					 
+		</if>
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+			AND t.REGIST_TIME &gt; #{pd.S_TIME}					 
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+			AND t.REGIST_TIME &lt;  #{pd.E_TIME}					 
+		</if>
+		ORDER BY t.NAME
+	</select>
+	
+	<select id="spPageListForTraveler" parameterType="pd" resultType="pd" >
+		SELECT `sp_article`.* FROM `sp_article` WHERE 1=1
+		<if test="SUBJECT != null and SUBJECT != ''">
+			AND `sp_article`.COMMENT LIKE CONCAT(CONCAT('%', #{SUBJECT}), '%')					 
+		</if>
+		<if test="SORT != null and SORT == 'ASC'">
+			ORDER BY `sp_article`.`PRICE` ASC					 
+		</if>
+		<if test="SORT != null and SORT == 'DESC'">
+			ORDER BY `sp_article`.`PRICE` DESC					 
+		</if>
+		LIMIT #{S_NUM}, #{LEN}		
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd" >
+		SELECT 
+			o.ID,
+			o.NAME,
+			o.SP_CLASS as CLASS_ID,
+			(SELECT CLASS_NAME FROM sp_class WHERE CLASS_ID = o.SP_CLASS) CLASS_NAME,
+			o.COMMENT,
+			o.PRICE,
+			o.MAIN_IMAGE,
+			o.DETAIL_IMAGE,
+			o.SERVICE_FEATURE,
+			o.DESCRIPTION,
+			o.SIZE_PACKING,
+			o.PURCHASE_URL,
+			o.VIEW_STATE,
+			o.SALE_STATE,
+			o.REGISTER,
+			o.REGIST_TIME
+		FROM 
+			<include refid="tableName"></include> o
+		WHERE 
+			ID = #{ID}
+	</select>
+	<select id="findByName" parameterType="pd" resultType="pd" >
+		SELECT 
+			<include refid="Field"></include>
+		FROM 
+			<include refid="tableName"></include>
+		WHERE 
+			NAME = #{pd.NAME}
+	</select>
+	<insert id="saveArt" parameterType="pd">
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES (
+			#{ID},
+			#{NAME},
+			#{SP_CLASS},
+			#{COMMENT},
+			#{PRICE},
+			#{MAIN_IMAGE},
+			#{DETAIL_IMAGE},
+			#{SERVICE_FEATURE},
+			#{DESCRIPTION},
+			#{SIZE_PACKING},
+			#{PURCHASE_URL},
+			#{VIEW_STATE},
+			#{SALE_STATE},
+			#{REGISTER},
+			#{REGIST_TIME}
+		)
+	</insert>
+	<update id="updateArt" parameterType="pd" >
+		UPDATE `sp_article`
+		SET 
+			`NAME`=#{NAME},
+			`SP_CLASS`=#{SP_CLASS},
+			`COMMENT`=#{COMMENT},
+			`PRICE`=#{PRICE},
+			`MAIN_IMAGE`=#{MAIN_IMAGE},
+			`DETAIL_IMAGE`=#{DETAIL_IMAGE},
+			`SERVICE_FEATURE`=#{SERVICE_FEATURE},
+			`DESCRIPTION`=#{DESCRIPTION},
+			`SIZE_PACKING`=#{SIZE_PACKING},
+			`PURCHASE_URL`=#{PURCHASE_URL},
+			`VIEW_STATE`=#{VIEW_STATE},
+			`SALE_STATE`=#{SALE_STATE},
+			`REGISTER`=#{REGISTER},
+			`REGIST_TIME`=#{REGIST_TIME}			
+		WHERE 
+			`ID` = #{ID}
+	</update>
+	<delete id="deleteArt" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE ID = #{ID}
+	</delete>
+	
+	<select id="spListCountForTraveler" parameterType="pd" resultType="pd" >
+		SELECT COUNT(*) as total FROM `sp_article` WHERE 1=1
+		<if test="SUBJECT != null and SUBJECT != ''">
+			AND `sp_article`.COMMENT LIKE CONCAT(CONCAT('%', #{SUBJECT}), '%')					 
+		</if>
+		<if test="SORT != null and SORT == 'ASC'">
+			ORDER BY `sp_article`.`PRICE` ASC					 
+		</if>
+		<if test="SORT != null and SORT == 'DESC'">
+			ORDER BY `sp_article`.`PRICE` DESC					 
+		</if>
+	</select>
+	
+</mapper>

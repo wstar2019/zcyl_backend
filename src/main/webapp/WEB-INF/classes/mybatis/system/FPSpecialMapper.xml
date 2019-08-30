@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FPSpecialMapper">
+	
+	<resultMap type="FPSpecial" id="FPSpecialMap">
+		<id column="ID" property="ID"/>
+		<result column="ART_ID" property="ART_ID"/>
+		<result column="SALE_QUANTITY" property="SALE_QUANTITY"/>
+		<result column="SALE_AMOUNT" property="SALE_AMOUNT"/>
+		<result column="VIEW_NUM" property="VIEW_NUM"/>
+		<result column="VIEW_STATE" property="VIEW_STATE"/>		
+	</resultMap>
+	
+	<sql id="tableName">
+		FP_Special
+	</sql>
+	
+	<sql id="Field">
+		ID,
+		ART_ID,
+		SALE_QUANTITY,
+		SALE_AMOUNT,
+		VIEW_NUM,
+		VIEW_STATE		
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{ART_ID},
+		#{SALE_QUANTITY},
+		#{SALE_AMOUNT},
+		#{VIEW_NUM},
+		#{VIEW_STATE}
+	</sql>	
+	
+	<select id="fpspeciallistPage" parameterType="page" resultType="pd" >
+	    SELECT `fp_special`.*, `sp_article`.name AS `ART_NAME`
+		FROM `fp_special` 
+		INNER JOIN `sp_article` ON `fp_special`.ART_ID = `sp_article`.ID 
+		ORDER BY `fp_special`.VIEW_STATE DESC
+	</select>	
+	<select id="fpSpecialAll" parameterType="pd" resultType="pd" >
+		SELECT  *				
+		FROM <include refid="tableName"></include> WHERE `fp_special`.`VIEW_STATE` = '1'
+		ORDER BY `fp_special`.`VIEW_NUM` DESC
+	</select>
+	<select id="getFPSpecial" parameterType="pd" resultType="pd" >
+		SELECT `sp_article`.id, `sp_article`.name, `sp_article`.comment, `sp_article`.price, `sp_article`.main_image				
+		FROM `fp_special` INNER JOIN `sp_article` ON `fp_special`.ART_ID = `sp_article`.ID
+		WHERE `fp_special`.`VIEW_STATE` = '1'
+		ORDER BY `fp_special`.`VIEW_NUM` DESC LIMIT 6 
+	</select>
+	<select id="hasFPSpecial" parameterType="pd" resultType="pd" >
+		SELECT * FROM <include refid="tableName"></include> WHERE `ART_ID` = #{ART_ID}
+	</select>
+	<update id="updateFPSpecial" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET SALE_QUANTITY = #{SALE_QUANTITY},
+				SALE_AMOUNT   = #{SALE_AMOUNT}	
+			WHERE 
+				ID = #{ID}
+	</update>
+	<update id="updateFPSpecialViewNum" parameterType="pd" >
+		UPDATE <include refid="tableName"></include> SET `VIEW_NUM` = #{VIEW_NUM} WHERE `ID` = #{ID}
+	</update>
+	<update id="updateFPSpecialViewState" parameterType="pd" >
+		UPDATE <include refid="tableName"></include> SET `VIEW_STATE` = #{VIEW_STATE} WHERE `ID` = #{ID}
+	</update>
+	
+	<insert id="saveFPSpecial" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include> (
+			ID, ART_ID
+		) VALUES (
+			#{ID},
+			#{ART_ID}
+		)
+	</insert>
+	
+	<delete id="deleteFPSpecial" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE `ART_ID` = #{ART_ID}
+	</delete>
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ConstMapper">
+	
+	<resultMap type="Const" id="constMap">
+		<id column="PKID" property="PKID"/>				
+		<result column="CONST_VALUE" property="CONST_VALUE"/>
+		<result column="CONST_NAME" property="CONST_NAME"/>
+		<result column="CONST_TYPE" property="CONST_TYPE"/>
+		<result column="CONST_DESCRIPTION" property="CONST_DESCRIPTION"/>
+		<result column="CONST_ORDER" property="CONST_ORDER"/>
+		<result column="CONST_COMMENT" property="CONST_COMMENT"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		CONST_LIST
+	</sql>
+	
+	<sql id="Field">
+		PKID,		
+		CONST_VALUE,
+		CONST_NAME,
+		CONST_TYPE,
+		CONST_DESCRIPTION,
+		CONST_ORDER,
+		CONST_COMMENT
+	</sql>
+	
+	<sql id="FieldValue">
+		#{PKID},
+		#{CONST_VALUE},
+		#{CONST_NAME},
+		#{CONST_TYPE},
+		#{CONST_DESCRIPTION},
+		#{CONST_ORDER},
+		#{CONST_COMMENT}
+	</sql>	
+	
+	<select id="find" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 1 = 1 
+			AND CONST_NAME = #{CONST_NAME}			
+			<if test="PKID != null and PKID != ''">
+			and PKID != #{PKID}
+			</if>
+	</select>
+	
+	<select id="constListlistPage" parameterType="page" resultType="pd" >
+		select  c.PKID,				
+				c.CONST_VALUE,
+				c.CONST_NAME,
+				c.CONST_TYPE,
+				c.CONST_DESCRIPTION,
+				c.CONST_ORDER,
+				c.CONST_COMMENT
+		from <include refid="tableName"></include> c 
+		where 1 = 1		
+		<if test="pd.S_CONST_TYPE != null and pd.S_CONST_TYPE != ''">
+			and c.CONST_TYPE LIKE CONCAT(CONCAT('%', #{pd.S_CONST_TYPE}), '%') 
+		</if>
+		<if test="pd.S_CONST_DESCRIPTION != null and pd.S_CONST_DESCRIPTION != ''">
+			and c.CONST_DESCRIPTION LIKE CONCAT(CONCAT('%', #{pd.S_CONST_DESCRIPTION}), '%')  
+		</if>
+		order by c.CONST_TYPE, c.CONST_ORDER
+	</select>
+	
+	<insert id="saveConstList" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) values (
+			#{ID},
+			#{CONST_VALUE},
+			#{CONST_NAME},
+			#{CONST_TYPE},
+			#{CONST_DESCRIPTION},
+			#{CONST_ORDER},
+			#{CONST_COMMENT}			
+		)
+	</insert>
+		
+	<delete id="deleteConstList" parameterType="pd" flushCache="false">
+		DELETE from <include refid="tableName"></include>
+		WHERE 
+			PKID = #{ID}
+	</delete>
+	
+	<update id="updateConstList" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET 
+				CONST_VALUE = #{CONST_VALUE},
+				CONST_NAME = #{CONST_NAME},
+				CONST_TYPE = #{CONST_TYPE},
+				CONST_DESCRIPTION = #{CONST_DESCRIPTION},
+				CONST_ORDER = #{CONST_ORDER},				
+				CONST_COMMENT = #{CONST_COMMENT}
+			WHERE
+				PKID = #{ID}
+	</update>	
+	
+	<select id="allConstByType" parameterType="pd" resultType="pd" >
+		SELECT  c.PKID,				
+				c.CONST_VALUE,
+				c.CONST_NAME
+		FROM <include refid="tableName"></include> c 
+		WHERE 1 = 1	AND c.CONST_TYPE = #{CONST_TYPE}		
+		ORDER BY c.CONST_VALUE ASC
+	</select>
+</mapper>

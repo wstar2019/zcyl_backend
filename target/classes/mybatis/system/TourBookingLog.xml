@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TourBookingLogMapper">
+
+	<resultMap type="TourBookingLog" id="tourBookingLogResultMap">
+		<id column="ID" property="ID"/>
+		<result column="BOOKING_ID" property="BOOKING_ID"/>		
+		<result column="PRE_STATE" property="PRE_STATE"/>
+		<result column="CUR_STATE" property="CUR_STATE"/>
+		<result column="UPDATE_TIME" property="UPDATE_TIME"/>
+		<result column="COMMENT" property="COMMENT"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		tour_booking_log
+	</sql>	
+	
+	<sql id="Field">
+		ID,
+		BOOKING_ID,
+		PRE_STATE,
+		CUR_STATE,
+		UPDATE_TIME,
+		COMMENT
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{BOOKING_ID},
+		#{PRE_STATE},
+		#{CUR_STATE},
+		#{UPDATE_TIME},
+		#{COMMENT}
+	</sql>
+		
+	<select id="findByBookingId" parameterType="pd" resultType="pd" >
+	    SELECT 
+	    	`tour_booking_log`.id,
+	    	`tour_booking_log`.update_time,
+			`tour_booking_log`.pre_state,
+			`tour_booking_log`.cur_state,
+			`tour_booking_log`.comment,
+			`pre_const`.const_name as pre_name,
+			`cur_const`.const_name as cur_name
+		FROM `tour_booking_log`
+		LEFT JOIN `const_list` as `pre_const` ON `tour_booking_log`.pre_state = `pre_const`.const_value
+		LEFT JOIN `const_list` as `cur_const` ON `tour_booking_log`.cur_state = `cur_const`.const_value
+		WHERE 1 = 1
+		AND `tour_booking_log`.booking_id = #{ID}
+		AND `pre_const`.const_type = 'booking_state'
+		AND `cur_const`.const_type = 'booking_state'
+		ORDER BY `tour_booking_log`.cur_state ASC
+	</select>
+	<insert id="insertBookingLog" parameterType="pd">
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES (
+			#{ID},
+			#{BOOKING_ID},
+			#{PRE_STATE},
+			#{CUR_STATE},
+			#{UPDATE_TIME},
+			#{COMMENT}
+		)
+	</insert>
+	
+</mapper>

@@ -1,0 +1,22 @@
+.page-header {
+    background: transparent linear-gradient(180deg, #F2F2F2 0%, #F2F2F2 0%, #E4E4E4 100%, #F2F2F2 100%, #F2F2F2 100%) repeat scroll 0% 0%;
+    border: medium none;
+    border-radius: 0px;
+    box-shadow: none;
+    font-family: "微软雅黑";
+    font-weight: 400;
+    font-style: normal;
+}
+
+.page-header ul {
+    list-style-type: none;
+}
+.page-header ul li{
+    padding: 10px;
+}
+.page-header ul li{
+    float: left;
+}
+.page-header *{
+    color: #06C;
+}

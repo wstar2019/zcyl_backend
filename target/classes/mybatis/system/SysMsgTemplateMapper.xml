@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysMsgTemplateMapper">
+	
+	<resultMap type="SysMsgTemplate" id="SysMsgTemplateMap">
+		<id column="ID" property="ID"/>		
+		<result column="NAME" property="NAME"/>
+		<result column="VAR" property="VAR"/>
+		<result column="KIND" property="KIND"/>
+		<result column="CONTENT" property="CONTENT"/>
+		<result column="TEMP" property="TEMP"/>
+		<result column="STATE" property="STATE"/>
+		<result column="REG_TIME" property="REG_TIME"/>
+		<result column="REG_MAN" property="REG_MAN"/>
+	</resultMap>
+	<sql id="tableName">
+		sys_msg_template
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		ID,
+		NAME,
+		VAR,
+		KIND,
+		CONTENT,
+		TEMP,
+		STATE,
+		REG_TIME,
+		REG_MAN
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{VAR},
+		#{KIND},
+		#{CONTENT},
+		#{TEMP},
+		#{STATE},
+		#{REG_TIME},
+		#{REG_MAN}
+	</sql>	
+	<update id="changeMsgTemplateState" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+		SET STATE = #{STATE}			
+		WHERE ID = #{ID}
+	</update>
+	<select id="msgTemplatelistPage" parameterType="page" resultType="pd" >
+		SELECT 
+			ID,
+			NAME,
+			VAR,
+			KIND,
+			STATE,
+			REG_TIME,
+			REG_MAN
+		FROM <include refid="tableName"></include>
+		WHERE 1 = 1
+		<if test="pd.NAME != null and pd.NAME != ''">
+		    AND `NAME` LIKE CONCAT(CONCAT('%', #{pd.NAME}), '%')
+		</if>
+		<if test="pd.KIND != null and pd.KIND != ''">
+		    AND `KIND` = #{pd.KIND}
+		</if>
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+		    AND `REG_TIME` &gt;= #{pd.S_TIME}
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+		    AND `REG_TIME` &lt;= #{pd.E_TIME}
+		</if>
+	</select>
+	
+	<insert id="saveMsgTemplate" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES (
+			#{ID},
+			#{NAME},
+			#{VAR},
+			#{KIND},
+			#{CONTENT},
+			#{TEMP},
+			#{STATE},
+			#{REG_TIME},
+			#{REG_MAN}
+		)
+	</insert>
+	
+	<select id="getMsgTemplateInfo" parameterType="pd" resultType="pd">
+		SELECT <include refid="Field"></include>
+		FROM <include refid="tableName"></include> 	
+		WHERE 1=1
+		AND ID = #{ID}
+	</select>
+	
+	<delete id="deleteMsgTemplate" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE 
+			ID = #{ID}
+	</delete>
+</mapper>

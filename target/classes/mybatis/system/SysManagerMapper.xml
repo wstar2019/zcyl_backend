@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysManagerMapper">
+	
+	<resultMap type="SysManager" id="SysManagerMap">
+		<id column="ID" property="ID"/>
+		<result column="NAME" property="NAME"/>
+		<result column="LG_ID" property="LG_ID"/>
+		<result column="PASS" property="PASS"/>
+		<result column="EMAIL" property="EMAIL"/>
+		<result column="TEL" property="TEL"/>
+		<result column="STATE" property="STATE"/>
+		<result column="ROLE_ID" property="ROLE_ID"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		sys_manager
+	</sql>
+	
+	<sql id="Field">
+		ID,
+		NAME,
+		LG_ID,
+		PASS,
+		EMAIL,
+		TEL,
+		STATE,
+		ROLE_ID
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{LG_ID},
+		#{PASS},
+		#{EMAIL},
+		#{TEL},
+		#{STATE},
+		#{ROLE_ID}
+	</sql>	
+	
+	<select id="findManager" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 1 = 1 
+			and LG_ID = #{NAME}			
+			<if test="PKID != null and PKID != ''">
+			and ID != #{PKID}
+			</if>
+	</select>
+	
+	<select id="managerlistPage" parameterType="page" resultType="pd" >
+		SELECT  `sys_manager`.*, `sys_role`.role_name
+		FROM `sys_manager`
+		LEFT JOIN `sys_role` on `sys_manager`.role_id = `sys_role`.id 		
+		WHERE 1 = 1
+		<if test="pd.LG_ID != null and pd.LG_ID != ''">
+		    AND `sys_manager`.LG_ID LIKE CONCAT(CONCAT('%', #{pd.LG_ID}), '%')
+		</if>
+		<if test="pd.NAME != null and pd.NAME != ''">
+		    AND `sys_manager`.NAME LIKE CONCAT(CONCAT('%', #{pd.NAME}), '%')
+		</if>
+		<if test="pd.TEL != null and pd.TEL != ''">
+		    AND `sys_manager`.TEL LIKE CONCAT(CONCAT('%', #{pd.TEL}), '%')
+		</if>
+		<if test="pd.STATE != null and pd.STATE != ''">
+		    AND `sys_manager`.STATE = #{pd.STATE}
+		</if>
+	</select>	
+	
+	<select id="listAllManager" parameterType="pd" resultType="pd" >
+	    SELECT  c.ID,
+				c.NAME,
+				c.LG_ID,
+				c.PASS,
+				c.EMAIL,
+				c.TEL,
+				c.STATE,
+				c.ROLE_ID,
+				<!-- (SELECT role.ROLE_NAME FROM roles role WHERE role.ROLE_ID = c.USER_ROLE_ID) ROLE_NAME -->
+		FROM <include refid="tableName"></include> c 		
+		WHERE 1 = 1
+	</select>
+	
+	<update id="updatePass" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET PASS = #{PASS}							
+			WHERE 
+				ID = #{ID}
+	</update>
+	
+	<update id="updateManager" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET <if test="NAME != null and NAME != ''">
+				NAME			= #{NAME},
+				</if>
+				<if test="LG_ID != null and LG_ID != ''">
+				LG_ID		    = #{LG_ID},
+				</if>
+				<if test="PASS != null and PASS != ''">
+					PASS		= #{PASS},
+				</if>
+				<if test="EMAIL != null and EMAIL != ''">
+					EMAIL		= #{EMAIL},
+				</if>
+				<if test="TEL != null and TEL != ''">
+				TEL			    = #{TEL},
+				</if>
+				<if test="STATE != null and STATE != ''">
+				STATE			= #{STATE},
+				</if>
+				<if test="ROLE_ID != null and NAME != ''">
+				ROLE_ID		    = #{ROLE_ID},
+				</if>
+				ID 				= #{ID}				
+			WHERE 
+				ID = #{ID}
+	</update>
+	<update id="initManagerRole" parameterType = "pd">
+	    UPDATE  <include refid="tableName"></include>
+			SET ROLE_ID = '' WHERE ROLE_ID = #{ID}
+	</update>
+	<update id="updateManagerRole" parameterType = "pd">
+	    UPDATE  <include refid="tableName"></include>
+			SET ROLE_ID		= #{ROLE_ID}				
+			WHERE 
+				ID = #{ID}
+	</update>
+	<update id="updateManagerState" parameterType = "pd">
+	    UPDATE  <include refid="tableName"></include>
+			SET STATE		= #{STATE}				
+			WHERE 
+				ID = #{ID}
+	</update>
+	
+	<insert id="saveManager" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) values (
+			#{ID},
+			#{NAME},
+			#{LG_ID},
+			#{PASS},
+			#{EMAIL},
+			#{TEL},
+			#{STATE},
+			#{ROLE_ID}
+		)
+	</insert>
+	
+	<delete id="deleteManager" parameterType="pd" flushCache="false">
+		DELETE from <include refid="tableName"></include>
+		WHERE 
+			ID = #{ID}
+	</delete>
+
+	<select id="getManagerInfo" parameterType="pd" resultType="pd">
+		SELECT  c.ID,
+				c.NAME,
+				c.LG_ID,
+				c.PASS,
+				c.EMAIL,
+				c.TEL,
+				c.ROLE_ID,
+				c.STATE
+		FROM <include refid="tableName"></include> c 	
+		WHERE 1=1
+		<if test="USERNAME!=null and PASSWORD!=null">
+		AND LG_ID = #{USERNAME} AND PASS=#{PASSWORD}
+		</if>
+		<if test="ID!=null">
+		AND ID = #{ID}
+		</if>
+	</select>
+	
+	<select id="findByName" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			NAME LIKE CONCAT(CONCAT('%', #{pNAME}), '%')
+	</select>
+	
+	<select id="findByLGID" parameterType="pd" resultType="pd" >
+		SELECT 
+			<include refid="Field"></include>
+		FROM 
+			<include refid="tableName"></include>
+		WHERE 
+			LG_ID = #{LG_ID} LIMIT 1
+	</select>
+</mapper>

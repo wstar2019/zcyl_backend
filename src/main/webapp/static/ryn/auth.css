@@ -1,0 +1,67 @@
+.auth {
+    margin: 100px auto;
+    background-image: url("../static/assets/images/bg.jpg");
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    position: relative;
+    text-align: left;
+}
+
+.form-signin {
+    max-width: 324px;
+    margin: 0 auto 20px;
+    text-align: center;
+}
+
+.form-signin .input-group {
+    margin-bottom: 20px;
+}
+
+.form-signin .form-control {
+    padding: 13px 12px;
+    height: 48px;
+    background-color: inherit;
+    color:white;
+}
+
+.form-signin .input-group-addon:last-child {
+	background-color: inherit;
+    border-radius: 0px 4px 4px 0px;
+}
+
+.form-signin p {
+    margin: 0px;
+    text-rendering: optimizelegibility;
+    font-feature-settings: "kern";
+    font-kerning: normal;
+}
+
+.form-signin .title {
+    font-family: "华文彩云 Bold", "华文彩云 Regular", "华文彩云";
+    font-weight: 700;
+    font-style: normal;
+    color: #FFF;
+    font-size: 32px;
+    margin: 20px 0px 50px;
+}
+
+.form-signin .input-group .img {
+    width: 12px;
+    height: 14px;
+}
+
+.form-signin .btn {
+    width: 100%;
+    border-radius: 24px;
+    height: 48px;
+    font-family: "微软雅黑 Bold", "微软雅黑 Regular", "微软雅黑";
+    font-style: normal;
+    font-size: 19px;
+    color: #FFF;
+    text-align: center;
+}
+.logo-img{
+    src: url("../assets/images/logo.png");
+}

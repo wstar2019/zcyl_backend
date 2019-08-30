@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SAOptionValueMapper">
+
+	<resultMap type="SAOptionValue" id="saOptionValueResultMap">
+		<id column="ID" property="ID"/>
+		<result column="MID" property="MID"/>
+		<result column="NAME" property="NAME"/>		
+		<result column="COMMENT" property="COMMENT"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		sa_option_value
+	</sql>	
+	
+	<sql id="Field">
+		ID,
+		MID,
+		NAME,
+		COMMENT
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{MID},
+		#{NAME},
+		#{COMMENT}
+	</sql>
+	
+	<select id="optvallistPage" parameterType="page" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from
+			<include refid="tableName"></include> t WHERE 1=1 
+		<if test="pd.ID != null and pd.ID != ''">
+			AND t.MID = #{pd.ID}					 
+		</if>		
+		order by t.NAME
+	</select>
+	
+	<select id="allOptVal" parameterType="pd" resultType="pd" >
+		select <include refid="Field"></include>
+		from <include refid="tableName"></include> t WHERE 1=1 		
+		order by t.NAME
+	</select>
+	<select id="findByMid" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			MID = #{MID}
+	</select>
+	<select id="getValuesOfCbxByMid" parameterType="pd" resultType="pd" >
+		select 
+			ID,
+			NAME
+		from 
+			<include refid="tableName"></include>
+		where 
+			MID = #{MID}
+	</select>
+	<select id="findById" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			ID = #{ID}
+	</select>
+	<select id="findByName" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			NAME = #{NAME}
+			<if test="ID != null and ID != ''">
+			and ID != #{ID}
+			</if>
+	</select>
+	<insert id="saveOptVal" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) values (
+			UUID(),
+			#{MID},
+			#{NAME},
+			#{COMMENT}
+		)
+	</insert>
+	
+	<update id="editOptVal" parameterType="pd" >
+		update  <include refid="tableName"></include>
+			set 
+				NAME = #{NAME},
+				COMMENT = #{COMMENT}			
+			where 
+				ID = #{ID}
+	</update>
+	
+	<delete id="deleteOptVal" parameterType="pd" flushCache="false">
+		delete from <include refid="tableName"></include>
+		where 
+			ID = #{ID}
+	</delete>
+	<delete id="delOptValWithMID" parameterType="pd" flushCache="false">
+		delete from <include refid="tableName"></include>
+		where 
+			MID = #{MID}
+	</delete>
+	<delete id="deleteAllOptVal" parameterType="String" >
+		delete from <include refid="tableName"></include>
+		where 
+			ID in
+  			 <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                  #{item}
+             </foreach>
+	</delete>
+
+	<select id="getOptionValueCount" parameterType="String" resultType="pd">
+		select 
+			count(ID) optValCount
+		from 
+		<include refid="tableName"></include>
+	</select>
+	
+</mapper>

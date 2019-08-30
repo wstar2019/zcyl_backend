@@ -1,0 +1,56 @@
+.main-container {
+    position: relative;
+    min-height: 100%;
+    padding: 0px;
+}
+
+.left-panel {
+    width: 200px;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    background: #EEE none repeat scroll 0% 0%;
+    height: 100%;
+    overflow-x: visible;
+}
+.left-panel .panel-group .panel + .panel{
+    margin-top: 0px;
+}
+
+.left-panel a:focus,
+.left-panel a:hover {
+    text-decoration: none;
+}
+.left-panel .panel-title {
+    font-family: "微软雅黑 Bold", "微软雅黑 Regular", "微软雅黑";
+    font-weight: 700;
+    font-style: normal;
+    color: #06C;
+    text-align: left;
+    font-size: 13px;
+}
+
+.left-panel .panel-title .img {
+    margin-right: 10px;
+}
+.left-panel .panel-body{
+    padding: 0px;
+}
+.left-panel .panel-body .list-group{
+    margin-bottom: 0px;
+}
+.left-panel .list-group li {
+    font-family: "微软雅黑 Bold", "微软雅黑 Regular", "微软雅黑";
+    font-weight: 700;
+    font-style: normal;
+    color: #06C;
+    text-align: left;
+    font-size: 13px;
+    padding-left: 25px;
+}
+.main-panel {
+    background: #FFF none repeat scroll 0% 0%;
+    margin-left: 200px;
+    overflow: visible;
+    padding-bottom: 30px;
+}

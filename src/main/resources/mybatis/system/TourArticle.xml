@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TourArticleMapper">
+
+	<resultMap type="TourArticle" id="tourArticleResultMap">
+		<id column="ID" property="ID"/>
+		<result column="NAME" property="NAME"/>		
+		<result column="DESCRIPTION" property="DESCRIPTION"/>
+		<result column="ADULT_EXPENSE" property="ADULT_EXPENSE"/>
+		<result column="CHILD_EXPENSE" property="CHILD_EXPENSE"/>
+		<result column="MAIN_IMAGE" property="MAIN_IMAGE"/>
+		<result column="DETAIL_IMAGE" property="DETAIL_IMAGE"/>
+		<result column="SERVICE_FEATURE" property="SERVICE_FEATURE"/>
+		<result column="TREATMENT_INFORMATION" property="TREATMENT_INFORMATION"/>
+		<result column="ROUTE_INTRODUCTION" property="ROUTE_INTRODUCTION"/>
+		<result column="EXPENSE_INCLUDED" property="EXPENSE_INCLUDED"/>
+		<result column="BOOKING_NOTE" property="BOOKING_NOTE"/>
+		<result column="PURCHASE_URL" property="PURCHASE_URL"/>
+		<result column="VIEW_STATE" property="VIEW_STATE"/>
+		<result column="SALE_STATE" property="SALE_STATE"/>
+		<result column="REGISTER" property="REGISTER"/>
+		<result column="REGIST_TIME" property="REGIST_TIME"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		tour_article
+	</sql>	
+	
+	<sql id="Field">
+		ID,
+		NAME,
+		DESCRIPTION,
+		ADULT_EXPENSE,
+		CHILD_EXPENSE,
+		MAIN_IMAGE,
+		DETAIL_IMAGE,
+		SERVICE_FEATURE,
+		TREATMENT_INFORMATION,
+		ROUTE_INTRODUCTION,
+		EXPENSE_INCLUDED,
+		BOOKING_NOTE,
+		PURCHASE_URL,
+		VIEW_STATE,
+		SALE_STATE,
+		REGISTER,
+		REGIST_TIME
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{DESCRIPTION},
+		#{ADULT_EXPENSE},
+		#{CHILD_EXPENSE},
+		#{MAIN_IMAGE},
+		#{DETAIL_IMAGE},
+		#{SERVICE_FEATURE},
+		#{TREATMENT_INFORMATION},
+		#{ROUTE_INTRODUCTION},
+		#{EXPENSE_INCLUDED},
+		#{BOOKING_NOTE},
+		#{PURCHASE_URL},
+		#{VIEW_STATE},
+		#{SALE_STATE},
+		#{REGISTER},
+		#{REGIST_TIME}
+	</sql>
+	
+	<select id="tourListCountForTraveler" parameterType="pd" resultType="pd" >
+		SELECT COUNT(*) as total FROM `tour_article` WHERE 1=1
+		<if test="SUBJECT != null and SUBJECT != ''">
+			AND `tour_article`.DESCRIPTION LIKE CONCAT(CONCAT('%', #{SUBJECT}), '%')					 
+		</if>
+		<if test="SORT != null and SORT == 'ASC'">
+			ORDER BY `tour_article`.`ADULT_EXPENSE` ASC					 
+		</if>
+		<if test="SORT != null and SORT == 'DESC'">
+			ORDER BY `tour_article`.`ADULT_EXPENSE` DESC					 
+		</if>
+	</select>
+	<select id="tourPageListForTraveler" parameterType="pd" resultType="pd" >
+		SELECT
+			`tour_article`.id,
+			`tour_article`.name,
+			<!-- CONCAT(SUBSTRING(`tour_article`.description, 1, 20),'...') as description, -->
+			`tour_article`.adult_expense,
+			`tour_article`.child_expense,
+			`tour_article`.main_image
+		FROM `tour_article`
+		WHERE 1=1
+			<if test="SUBJECT != null and SUBJECT != ''">
+				AND `tour_article`.COMMENT LIKE CONCAT(CONCAT('%', #{SUBJECT}), '%')					 
+			</if>
+			<if test="SORT != null and SORT == 'ASC'">
+				ORDER BY `tour_article`.`ADULT_EXPENSE` ASC					 
+			</if>
+			<if test="SORT != null and SORT == 'DESC'">
+				ORDER BY `tour_article`.`ADULT_EXPENSE` DESC					 
+			</if>
+		LIMIT #{S_NUM}, #{LEN}		
+	</select>
+	
+	<select id="tourarticlelistPage" parameterType="page" resultType="pd" >
+		SELECT  t.ID,
+				t.NAME,
+				CONCAT(SUBSTRING(t.DESCRIPTION, 1, 30),'...') as DESCRIPTION,
+				t.REGIST_TIME
+		FROM <include refid="tableName"></include> t WHERE 1=1 
+		<if test="pd.NAME!= null and pd.NAME != ''">
+			AND t.NAME LIKE CONCAT(CONCAT('%', #{pd.NAME}), '%')					 
+		</if>
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+			AND t.REGIST_TIME >= #{pd.S_TIME}					 
+		</if>
+		<!-- <if test="pd.E_TIME != null and pd.E_TIME != ''">
+			AND t.REGIST_TIME <=  #{pd.E_TIME}					 
+		</if> -->
+		order by t.NAME
+	</select>
+	<select id="findById" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			ID = #{ID}
+	</select>
+	<select id="findByName" parameterType="pd" resultType="pd" >
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			NAME = #{NAME}
+	</select>
+	<insert id="saveArt" parameterType="pd">
+		insert into <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) values (
+			#{ID},
+			#{NAME},
+			#{DESCRIPTION},
+			#{ADULT_EXPENSE},
+			#{CHILD_EXPENSE},
+			#{MAIN_IMAGE},
+			#{DETAIL_IMAGE},
+			#{SERVICE_FEATURE},
+			#{TREATMENT_INFORMATION},
+			#{ROUTE_INTRODUCTION},
+			#{EXPENSE_INCLUDED},
+			#{BOOKING_NOTE},
+			#{PURCHASE_URL},
+			#{VIEW_STATE},
+			#{SALE_STATE},
+			#{REGISTER},
+			#{REGIST_TIME}
+		)
+	</insert>
+	<update id="updateArt" parameterType="pd" >
+		UPDATE `tour_article`
+		SET 
+			`NAME`=#{NAME},
+			`DESCRIPTION`=#{DESCRIPTION},
+			`ADULT_EXPENSE`=#{ADULT_EXPENSE},
+			`CHILD_EXPENSE`=#{CHILD_EXPENSE},
+			`MAIN_IMAGE`=#{MAIN_IMAGE},
+			`DETAIL_IMAGE`=#{DETAIL_IMAGE},
+			`SERVICE_FEATURE`=#{SERVICE_FEATURE},
+			`TREATMENT_INFORMATION`=#{TREATMENT_INFORMATION},
+			`ROUTE_INTRODUCTION`=#{ROUTE_INTRODUCTION},
+			`EXPENSE_INCLUDED`=#{EXPENSE_INCLUDED},
+			`BOOKING_NOTE`=#{BOOKING_NOTE},
+			`PURCHASE_URL`=#{PURCHASE_URL},
+			`VIEW_STATE`=#{VIEW_STATE},
+			`SALE_STATE`=#{SALE_STATE},
+			`REGISTER`=#{REGISTER},
+			`REGIST_TIME`=#{REGIST_TIME}			
+		WHERE 
+			`ID` = #{ID}
+	</update>
+	<delete id="deleteArt" parameterType="pd" flushCache="false">
+		delete from <include refid="tableName"></include>
+		where ID = #{ID}
+	</delete>
+	
+</mapper>

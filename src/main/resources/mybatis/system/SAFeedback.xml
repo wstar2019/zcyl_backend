@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SAFeedbackMapper">
+
+	<resultMap type="SAFeedback" id="saFeedbackResultMap">
+		<id column="ID" property="ID"/>
+		<result column="USER_ID" property="USER_ID"/>		
+		<result column="ARTICLE_ID" property="ARTICLE_ID"/>
+		<result column="RATE" property="RATE"/>
+		<result column="CONTENT" property="CONTENT"/>
+		<result column="CREATE_TIME" property="CREATE_TIME"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		sa_feedback
+	</sql>	
+	
+	<sql id="Field">
+		ID,
+		USER_ID,
+		ARTICLE_ID,
+		RATE,
+		CONTENT,
+		CREATE_TIME
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{USER_ID},
+		#{ARTICLE_ID},
+		#{RATE},
+		#{CONTENT},
+		#{CREATE_TIME}
+	</sql>
+	
+	<select id="feedbacklistPage" parameterType="page" resultType="pd" >
+		SELECT 
+	    	`sa_feedback`.id,
+			`sys_customer`.name AS customer,
+			`sa_article`.name AS article, 
+			`sa_feedback`.create_time,
+			`sa_feedback`.content
+		FROM
+			`sa_feedback`
+		INNER JOIN `sys_customer` ON `sa_feedback`.user_id = `sys_customer`.id
+		INNER JOIN `sa_article` ON `sa_feedback`.article_id = `sa_article`.id
+		WHERE 1 = 1
+		<if test="pd.USER_NAME != null and pd.USER_NAME != ''">
+			AND `sys_customer`.NAME LIKE CONCAT(CONCAT('%', #{pd.USER_NAME}), '%')					 
+		</if>
+		<if test="pd.ART_NAME != null and pd.ART_NAME != ''">
+			AND `sa_article`.NAME LIKE CONCAT(CONCAT('%', #{pd.ART_NAME}), '%')
+		</if>
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+			AND `sa_feedback`.create_time &gt; #{pd.S_TIME}					 
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+			AND `sa_feedback`.create_time &lt; #{pd.E_TIME}					 
+		</if>
+		<if test="pd.ART_ID != null and pd.ART_ID != ''">
+			AND `sa_feedback`.article_id = #{pd.ART_ID}
+		</if>
+	</select>
+	<delete id="deleteFeedback" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE ID = #{ID}
+	</delete>
+</mapper>

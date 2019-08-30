@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SABookingMapper">
+
+	<resultMap type="SABooking" id="saBookingResultMap">
+		<id column="ID" property="ID"/>
+		<result column="USER_ID" property="USER_ID"/>		
+		<result column="ARTICLE_ID" property="ARTICLE_ID"/>
+		<result column="AMOUNT" property="AMOUNT"/>
+		<result column="TOTAL_PRICE" property="TOTAL_PRICE"/>
+		<result column="REQUEST_DATE" property="REQUEST_DATE"/>
+		<result column="BOOKING_STATE" property="BOOKING_STATE"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		sa_booking
+	</sql>	
+	
+	<sql id="Field">
+		ID,
+		USER_ID,
+		ARTICLE_ID,
+		AMOUNT,
+		TOTAL_PRICE,
+		REQUEST_DATE,
+		BOOKING_STATE
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{USER_ID},
+		#{ARTICLE_ID},
+		#{AMOUNT},
+		#{TOTAL_PRICE},
+		#{REQUEST_DATE},
+		#{BOOKING_STATE}
+	</sql>
+	
+	<update id="updateBookingState" parameterType="pd" >
+		UPDATE `sa_booking`
+		SET 
+			`BOOKING_STATE`=#{CUR_STATE}			
+		WHERE 
+			`ID` = #{BOOKING_ID}
+	</update>
+	
+	<select id="bookinglistPage" parameterType="page" resultType="pd" >
+	    SELECT 
+	    	`sa_booking`.id,
+			`sys_customer`.name AS customer,
+			`const_list`.const_name AS booking_state
+		FROM
+			`sa_booking`
+		LEFT JOIN `sys_customer` ON `sa_booking`.user_id = `sys_customer`.id
+		LEFT JOIN `sa_article` ON `sa_booking`.article_id = `sa_article`.id
+		LEFT JOIN `const_list` ON `sa_booking`.booking_state = `const_list`.const_value
+		WHERE 1 = 1 AND `const_list`.CONST_TYPE = 'booking_state'
+		<if test="pd.USER_NAME != null and pd.USER_NAME != ''">
+			AND `sys_customer`.NAME LIKE CONCAT(CONCAT('%', #{pd.USER_NAME}), '%')					 
+		</if>
+		<if test="pd.BOOKING_STATE != null and pd.BOOKING_STATE != ''">
+			AND `sa_booking`.booking_state = #{pd.BOOKING_STATE}					 
+		</if>
+		<if test="pd.BOOKING_NUM != null and pd.BOOKING_NUM != ''">
+			AND `sa_booking`.ID LIKE CONCAT(CONCAT('%', #{pd.BOOKING_NUM}), '%')
+		</if>
+		<if test="pd.ART_ID != null and pd.ART_ID != ''">
+			AND `sa_booking`.ARTICLE_ID = #{pd.ART_ID}
+		</if>
+		ORDER BY `sa_booking`.REQUEST_DATE ASC
+	</select>
+	
+	<select id="findById" parameterType="pd" resultType="pd" >
+	    SELECT 
+	    	`sa_booking`.id,
+			`sys_customer`.name AS user_name,
+			`sys_customer`.email AS user_email,
+			`sys_customer`.tel AS user_phone,
+			`sa_article`.name AS art_name,
+			`sa_article`.comment AS art_desc,
+			`sa_booking`.amount,
+			`sa_booking`.request_date,
+			`sa_booking`.total_price,
+			`sa_booking`.booking_state,
+			`const_list`.const_name AS booking_name
+		FROM
+			`sa_booking`
+		LEFT JOIN `sys_customer` ON `sa_booking`.user_id = `sys_customer`.id
+		LEFT JOIN `sa_article` ON `sa_booking`.article_id = `sa_article`.id
+		LEFT JOIN `const_list` ON `sa_booking`.booking_state = `const_list`.const_value
+		WHERE 1 = 1
+		AND `const_list`.const_type = 'booking_state'
+		AND `sa_booking`.id = #{ID}
+		
+	</select>
+	
+</mapper>

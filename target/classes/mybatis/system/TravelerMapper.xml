@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TravelerMapper">
+	
+	<resultMap type="Traveler" id="TravelerMap">
+		<id column="ID" property="ID"/>
+		<result column="NAME" property="NAME"/>
+		<result column="LG_ID" property="LG_ID"/>
+		<result column="PASS" property="PASS"/>
+		<result column="EMAIL" property="EMAIL"/>
+		<result column="TEL" property="TEL"/>
+		<result column="ADDRESS" property="ADDRESS"/>
+		<result column="SEX" property="SEX"/>
+		<result column="BIRTHDAY" property="BIRTHDAY"/>
+		<result column="AVATAR" property="AVATAR"/>
+		<result column="STATE" property="STATE"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		sys_customer
+	</sql>
+	
+	<sql id="Field">ID, NAME, LG_ID, PASS, EMAIL, TEL, ADDRESS, SEX, BIRTHDAY, AVATAR, STATE</sql>
+	<sql id="FieldValue">
+	    #{ID}, #{NAME}, #{LG_ID}, #{PASS}, #{EMAIL}, #{TEL},
+		#{ADDRESS}, #{SEX}, #{BIRTHDAY}, #{AVATAR}, #{STATE}
+	</sql>	
+	
+	<update id="updatePass" parameterType="pd" >
+		UPDATE <include refid="tableName"></include> SET PASS = #{PASS} WHERE LG_ID = #{LG_ID}
+	</update>
+	<update id="updateTraveler" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET <if test="NAME != null and NAME != ''">
+					NAME = #{NAME},
+				</if>
+				<if test="LG_ID != null and LG_ID != ''">
+					LG_ID = #{LG_ID},
+				</if>
+				<if test="PASS != null and PASS != ''">
+					PASS = #{PASS},
+				</if>
+				<if test="EMAIL != null and EMAIL != ''">
+					EMAIL = #{EMAIL},
+				</if>
+				<if test="TEL != null and TEL != ''">
+					TEL = #{TEL},
+				</if>
+				<if test="ADDRESS != null and ADDRESS != ''">
+					ADDRESS = #{ADDRESS},
+				</if>
+				<if test="SEX != null and SEX != ''">
+					SEX = #{SEX},
+				</if>
+				<if test="BIRTHDAY != null and BIRTHDAY != ''">
+					BIRTHDAY = #{BIRTHDAY},
+				</if>
+				<if test="AVATAR != null and AVATAR != ''">
+					AVATAR = #{AVATAR},
+				</if>
+					ID = #{ID} WHERE ID = #{ID}
+	</update>
+	<insert id="registTraveler" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include>(<include refid="Field"></include>) VALUES (
+			#{ID}, #{NAME}, #{LG_ID},
+			#{PASS}, #{EMAIL}, #{TEL},
+			#{ADDRESS}, #{SEX}, #{BIRTHDAY},
+			#{AVATAR}, #{STATE} )
+	</insert>
+	<select id="findByLGID" parameterType="pd" resultType="pd" >
+		SELECT * FROM `sys_customer` WHERE `LG_ID` = #{LG_ID}
+	</select>
+	<select id="loginTraveler" parameterType="pd" resultType="pd">
+		SELECT <include refid="Field"></include>
+		FROM <include refid="tableName"></include> 	
+		WHERE LG_ID = #{USERNAME} AND PASS=#{PASSWORD}
+	</select>
+</mapper>

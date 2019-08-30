@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysLogMapper">
+	
+	<resultMap type="SysLog" id="SysLogMap">
+		<id column="ID" property="ID"/>		
+		<result column="OP_DT" property="OP_DT"/>
+		<result column="OP_MAN" property="OP_MAN"/>
+		<result column="OP_MENU" property="OP_MENU"/>
+		<result column="OP_KIND" property="OP_KIND"/>
+		<result column="OP_CONTENT" property="OP_CONTENT"/>
+		<result column="AT_SORT" property="AT_SORT"/>
+		<result column="AT_ID" property="AT_ID"/>
+	</resultMap>
+	<sql id="tableName">
+		sys_log
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		ID,
+		OP_DT,
+		OP_MAN,
+		OP_MENU,
+		OP_KIND,
+		OP_CONTENT,
+		AT_SORT,
+		AT_ID
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{OP_DT},
+		#{OP_MAN},
+		#{OP_MENU},
+		#{OP_KNID},
+		#{OP_CONTENT},
+		#{AT_SORT},
+		#{AT_ID}
+	</sql>	
+	
+	<insert id="insertLog" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES(
+			UUID(),
+			#{OP_DT},
+			#{OP_MAN},
+			#{OP_MENU},
+			#{OP_KIND},
+			#{OP_CONTENT},
+			#{AT_SORT},
+			#{AT_ID}
+		)
+	</insert>
+	
+	<select id="loglistPage" parameterType="page" resultType="pd" >
+		SELECT  * FROM `sys_log` 		
+		WHERE 1 = 1
+		<if test="pd.MAN != null and pd.MAN != ''">
+		    AND `sys_log`.OP_MAN LIKE CONCAT(CONCAT('%', #{pd.MAN}), '%')
+		</if>
+		<if test="pd.KIND != null and pd.KIND != ''">
+		    AND `sys_log`.OP_KIND = #{pd.KIND}
+		</if>
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+		    AND `sys_log`.OP_DT &gt; #{pd.S_TIME}
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+		    AND `sys_log`.OP_DT &lt; #{pd.E_TIME}
+		</if>
+		ORDER BY `sys_log`.OP_DT ASC
+	</select>
+	
+	<delete id="deleteLog" parameterType="pd" flushCache="false">
+		DELETE from <include refid="tableName"></include>
+		WHERE 
+			ID = #{ID}
+	</delete>
+	
+	<select id="logsBySAArticlelistPage" parameterType="page" resultType="pd" >		
+	   SELECT  c.ID,
+	    		c.OP_DT,
+	    		sa.NAME,
+	    		c.OP_KIND
+	    FROM sys_log as c INNER JOIN sa_article sa ON c.AT_ID = sa.ID 	
+		
+		WHERE 1 = 1	AND c.AT_SORT = #{pd.AT_SORT}
+		<if test="pd.AT_NAME != null and pd.AT_NAME != ''">
+		    AND sa.name = #{pd.AT_NAME}
+		</if>	
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+		    AND c.OP_DT &gt;= #{pd.S_TIME}
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+		    AND c.OP_DT &lt;= #{pd.E_TIME}
+		</if>
+		<if test="pd.OP_KIND != null and pd.OP_KIND != ''">
+		    AND c.OP_KIND = #{pd.OP_KIND}
+		</if>		 		
+	</select>
+	
+	<select id="logsBySPArticlelistPage" parameterType="page" resultType="pd" >		
+	   SELECT  c.ID,
+	    		c.OP_DT,
+	    		sp.NAME,
+	    		c.OP_KIND
+	    FROM sys_log as c INNER JOIN sp_article sp ON c.AT_ID = sp.ID 	
+		
+		WHERE 1 = 1	AND c.AT_SORT = #{pd.AT_SORT}
+		<if test="pd.AT_NAME != null and pd.AT_NAME != ''">
+		    AND sp.name = #{pd.AT_NAME}
+		</if>	
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+		    AND c.OP_DT &gt;= #{pd.S_TIME}
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+		    AND c.OP_DT &lt;= #{pd.E_TIME}
+		</if>
+		<if test="pd.OP_KIND != null and pd.OP_KIND != ''">
+		    AND c.OP_KIND = #{pd.OP_KIND}
+		</if>		 		
+	</select>
+	
+	<select id="logsByTourArticlelistPage" parameterType="page" resultType="pd" >		
+	   SELECT  c.ID,
+	    		c.OP_DT,
+	    		ta.NAME,
+	    		c.OP_KIND
+	    FROM sys_log as c INNER JOIN tour_article ta ON c.AT_ID = ta.ID 	
+		
+		WHERE 1 = 1	AND c.AT_SORT = #{pd.AT_SORT}
+		<if test="pd.AT_NAME != null and pd.AT_NAME != ''">
+		    AND ta.name = #{pd.AT_NAME}
+		</if>	
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+		    AND c.OP_DT &gt;= #{pd.S_TIME}
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+		    AND c.OP_DT &lt;= #{pd.E_TIME}
+		</if>
+		<if test="pd.OP_KIND != null and pd.OP_KIND != ''">
+		    AND c.OP_KIND = #{pd.OP_KIND}
+		</if>		 		
+	</select>
+</mapper>

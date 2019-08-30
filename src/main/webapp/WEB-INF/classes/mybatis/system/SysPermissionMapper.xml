@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysPermissionMapper">
+	
+	<resultMap type="SysPermission" id="SysPermissionMap">
+		<id column="ID" property="ID"/>
+		<result column="NAME" property="NAME"/>
+		<result column="ENG_NAME" property="ENG_NAME"/>
+		<result column="M_ID" property="M_ID"/>
+		<result column="PARENT_ID" property="PARENT_ID"/>
+		<result column="STATE" property="STATE"/>
+		<result column="COMMENT" property="COMMENT"/>		
+	</resultMap>
+	
+	<sql id="tableName">
+		sys_permission
+	</sql>
+	
+	<sql id="Field">
+		ID,
+		NAME,
+		ENG_NAME,
+		M_ID,
+		PARENT_ID,
+		STATE,
+		COMMENT		
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{ENG_NAME},
+		#{M_ID},
+		#{PARENT_ID},
+		#{STATE},
+		#{COMMENT}
+	</sql>	
+	
+	<select id="listPermissionByMenuId" parameterType="String" resultMap="SysPermissionMap">
+		SELECT * FROM <include refid="tableName"></include> WHERE M_ID = #{MENU_ID}
+	</select>
+	
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="KPSituationMapper">
+	
+	<resultMap type="KPSituation" id="KPSituationMap">
+		<id column="ID" property="ID"/>		
+		<result column="SN_TITLE" property="SN_TITLE"/>
+		<result column="SN_MAN" property="SN_MAN"/>
+		<result column="SN_DATETIME" property="SN_DATETIME"/>
+		<result column="SN_IMAGE" property="SN_IMAGE"/>
+		<result column="SN_CONTENT" property="SN_CONTENT"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		kp_situation
+	</sql>
+	
+	<sql id="Field">
+		ID,
+		SN_TITLE,
+		SN_MAN,
+		SN_DATETIME,
+		SN_IMAGE,
+		SN_CONTENT
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{SN_TITLE},
+		#{SN_MAN},
+		#{SN_DATETIME},
+		#{SN_IMAGE},
+		#{SN_CONTENT}
+	</sql>	
+	
+	<select id="kpSitslistForTraveler" parameterType="pd" resultType="pd" >
+		SELECT * FROM `kp_situation` ORDER BY SN_DATETIME ASC LIMIT 7
+	</select>
+	<select id="prevSituation" parameterType="pd" resultType="pd" >
+		SELECT id, sn_title FROM `kp_situation` WHERE sn_datetime &lt; #{pd.dt} LIMIT 1
+	</select>
+	<select id="nextSituation" parameterType="pd" resultType="pd" >
+		SELECT id, sn_title FROM `kp_situation` WHERE sn_datetime &gt; #{pd.dt} LIMIT 1
+	</select>
+	<select id="kpSituationlistPage" parameterType="page" resultType="pd" >
+		SELECT  * FROM `kp_situation` 		
+		WHERE 1 = 1
+		<if test="pd.SN_TITLE != null and pd.SN_TITLE != ''">
+		    AND `kp_situation`.SN_TITLE LIKE CONCAT(CONCAT('%', #{pd.SN_TITLE}), '%')
+		</if>
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+			AND `kp_situation`.SN_DATETIME &gt; #{pd.S_TIME}					 
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+			AND `kp_situation`.SN_DATETIME &lt;  #{pd.E_TIME}					 
+		</if>
+	</select>
+	
+	<delete id="deleteSN" parameterType="pd" flushCache="false">
+		DELETE from <include refid="tableName"></include>
+		WHERE ID = #{ID}
+	</delete>
+	<select id="findById" parameterType="pd" resultType="pd" >
+		SELECT 
+			<include refid="Field"></include>
+		FROM 
+			<include refid="tableName"></include>
+		WHERE 
+			ID = #{ID}
+	</select>
+	<insert id="saveSN" parameterType="pd">
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES (
+			#{ID},
+			#{SN_TITLE},
+			#{SN_MAN},
+			#{SN_DATETIME},
+			#{SN_IMAGE},
+			#{SN_CONTENT}
+		)
+	</insert>
+	<update id="updateSN" parameterType="pd" >
+		UPDATE <include refid="tableName"></include>
+		SET 
+			`SN_TITLE`=#{SN_TITLE},
+			`SN_CONTENT`=#{SN_CONTENT},
+			`SN_IMAGE`=#{SN_IMAGE},
+			`SN_MAN`=#{SN_MAN},
+			`SN_DATETIME`=#{SN_DATETIME}
+		WHERE 
+			`ID` = #{ID}
+	</update>
+	
+</mapper>

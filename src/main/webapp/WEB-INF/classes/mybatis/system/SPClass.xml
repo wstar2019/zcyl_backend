@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SPClassMapper">
+
+	<resultMap type="SPClass" id="spClassResultMap">
+		<id column="CLASS_ID" property="CLASS_ID"/>
+		<result column="CLASS_NAME" property="CLASS_NAME"/>
+		<result column="CLASS_IMG_URL" property="CLASS_IMG_URL"/>
+		<result column="CLASS_CONTENT" property="CLASS_CONTENT"/>
+		<result column="CLASS_VISIBILITY" property="CLASS_VISIBILITY"/>
+		<result column="CLASS_SHOW_TYPE" property="CLASS_SHOW_TYPE"/>	
+		<result column="CLASS_PARENT" property="CLASS_PARENT"/>	
+		<result column="CLASS_LAYER" property="CLASS_LAYER"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		sp_class
+	</sql>	
+	
+	<sql id="Field">
+		CLASS_ID,
+		CLASS_NAME,
+		CLASS_IMG_URL,
+		CLASS_CONTENT,
+		CLASS_VISIBILITY,
+		CLASS_SHOW_TYPE,
+		CLASS_PARENT,
+		CLASS_LAYER
+	</sql>
+	
+	<sql id="FieldValue">
+		#{CLASS_ID},
+		#{CLASS_NAME},
+		#{CLASS_IMG_URL},
+		#{CLASS_CONTENT},
+		#{CLASS_VISIBILITY},
+		#{CLASS_SHOW_TYPE},
+		#{CLASS_PARENT},
+		#{CLASS_LAYER}
+	</sql>
+	
+	<select id="listSubClassByParentId" parameterType="String" resultMap="spClassResultMap">
+		SELECT  c.CLASS_ID,
+				c.CLASS_NAME,
+				c.CLASS_IMG_URL,
+				c.CLASS_PARENT,
+				(SELECT m.CLASS_NAME FROM sp_class m WHERE m.CLASS_ID = c.CLASS_PARENT) PARENT_NAME,
+				c.CLASS_CONTENT,
+				c.CLASS_VISIBILITY,
+				c.CLASS_SHOW_TYPE,
+				c.CLASS_LAYER
+		FROM <include refid="tableName"></include> c
+		WHERE c.CLASS_PARENT = #{PARENT_ID}
+	</select>
+	
+	<select id="classlistPage" parameterType="page" resultType="pd" >
+		SELECT  c.CLASS_ID,
+				c.CLASS_NAME,
+				c.CLASS_IMG_URL,
+				c.CLASS_CONTENT,
+				c.CLASS_VISIBILITY,
+				c.CLASS_SHOW_TYPE,
+				c.CLASS_PARENT,
+				c.CLASS_LAYER				
+		FROM <include refid="tableName"></include> c 
+		WHERE 1 = 1 ORDER BY c.CLASS_PARENT
+	</select>
+	<insert id="saveClass" parameterType="pd">
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES (
+			#{CLASS_ID},
+			#{CLASS_NAME},
+			#{CLASS_IMG_URL},
+			#{CLASS_CONTENT},			
+			#{CLASS_VISIBILITY},
+			#{CLASS_SHOW_TYPE},
+			#{CLASS_PARENT},
+			#{CLASS_LAYER}			
+		)
+	</insert>
+	<update id="updateClass" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+			SET CLASS_NAME= #{CLASS_NAME}, CLASS_IMG_URL = #{CLASS_IMG_URL},
+				CLASS_CONTENT = #{CLASS_CONTENT}, CLASS_VISIBILITY = #{CLASS_VISIBILITY},
+				CLASS_SHOW_TYPE = #{CLASS_SHOW_TYPE}, CLASS_PARENT = #{CLASS_PARENT}, 
+				CLASS_LAYER = #{CLASS_LAYER}
+			WHERE CLASS_ID = #{CLASS_ID}
+	</update>
+	<delete id="deleteClass" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE CLASS_ID = #{CLASS_ID} OR CLASS_PARENT = #{CLASS_ID}
+	</delete>
+	<select id="getClassById" parameterType="pd" resultType="pd">
+		SELECT  c.CLASS_ID,
+				c.CLASS_NAME,
+				c.CLASS_IMG_URL,
+				c.CLASS_CONTENT,
+				c.CLASS_VISIBILITY,
+				c.CLASS_SHOW_TYPE,
+				c.CLASS_PARENT,
+				c.CLASS_LAYER	
+		FROM
+		<include refid="tableName"></include> c
+		WHERE 1=1
+		<if test="CLASS_ID != null">
+			AND CLASS_ID = #{CLASS_ID}
+		</if>
+		
+	</select>
+	
+	<select id="getClassByUpperId" parameterType="pd" resultType="pd" >
+		SELECT  c.CLASS_ID,
+				c.CLASS_NAME,
+				c.CLASS_IMG_URL,
+				c.CLASS_CONTENT,
+				c.CLASS_VISIBILITY,
+				c.CLASS_SHOW_TYPE,
+				c.CLASS_PARENT,
+				c.CLASS_LAYER				
+		FROM <include refid="tableName"></include> c
+		WHERE 1 = 1
+		AND c.CLASS_PARENT = #{UPPERID}
+		ORDER BY c.CLASS_NAME
+	</select>
+	
+</mapper>

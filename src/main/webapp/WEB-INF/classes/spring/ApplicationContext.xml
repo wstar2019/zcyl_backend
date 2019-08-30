@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+						http://www.springframework.org/schema/task
+						http://www.springframework.org/schema/task/spring-task-3.0.xsd
+        				http://www.springframework.org/schema/context
+        				http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 启用注解 -->
+	<context:annotation-config />
+	<util:properties id="baseconfig" location="classpath:baseconfig.properties"/>
+	<util:properties id="mysqlbackup" location="classpath:mysqlbackup.properties"/>
+
+	<!-- 启动组件扫描，排除@Controller组件，该组件由SpringMVC配置文件扫描 -->
+	<context:component-scan base-package="com.bjzcyl">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>	
+	<bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    	<property name="dataSource" ref="dataSource"></property>
+ 	</bean>	
+	<!-- <bean id="user" class="com.gson.oauth.User" scope="prototype"></bean> -->
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+                 <!--<value>/WEB-INF/classes/dbconfig.properties</value>  -->
+                 <value>classpath:dbconfig.properties</value>
+            </list>
+        </property>
+	</bean>
+	<task:annotation-driven scheduler="wwgscheduler" executor="executor"/>
+	<task:scheduler id="wwgscheduler" pool-size="10"/>
+	<task:executor id="executor" pool-size="5"/>
+	
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+         <property name="url" value="${url}" />
+         <property name="username" value="${username}" />
+         <property name="password" value="${password}" />
+         <property name="driverClassName" value="${driverClassName}" />
+         <property name="filters" value="${filters}" />
+   		 <property name="maxActive" value="${maxActive}" />
+         <property name="initialSize" value="${initialSize}" />
+         <property name="maxWait" value="${maxWait}" />
+         <property name="minIdle" value="${minIdle}" />
+   		 <property name="timeBetweenEvictionRunsMillis" value="${timeBetweenEvictionRunsMillis}" />
+         <property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}" />
+         <property name="validationQuery" value="${validationQuery}" />
+         <property name="testWhileIdle" value="${testWhileIdle}" />
+         <property name="testOnBorrow" value="${testOnBorrow}" />
+         <property name="testOnReturn" value="${testOnReturn}" />
+         <property name="maxOpenPreparedStatements" value="${maxOpenPreparedStatements}" />
+         <property name="removeAbandoned" value="${removeAbandoned}" />
+         <property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}" />
+         <property name="logAbandoned" value="${logAbandoned}" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false"
+			           rollback-for="java.lang.Exception"/>
+			<tx:method name="insert*" propagation="REQUIRED" read-only="false"
+			           rollback-for="java.lang.Exception" />
+			<tx:method name="update*" propagation="REQUIRED" read-only="false"
+			           rollback-for="java.lang.Exception" />
+			<tx:method name="save*" propagation="REQUIRED" read-only="false"
+			           rollback-for="java.lang.Exception" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<aop:config>
+		<aop:pointcut id="pc" expression="execution(* com.bjzcyl.service..*(..))" />
+		<aop:advisor pointcut-ref="pc" advice-ref="txAdvice" />
+	</aop:config>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    	<property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>
+        <property name="mapperLocations" value="classpath:mybatis/*/*.xml"></property>
+    </bean>
+
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+
+
+
+	<!-- ================ Shiro start ================ -->
+		<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+			<property name="realm" ref="ShiroRealm" />
+		</bean>
+
+		<bean id="ShiroRealm" class="com.bjzcyl.interceptor.shiro.ShiroRealm" ></bean>
+
+		<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+			<property name="securityManager" ref="securityManager" />
+			<property name="loginUrl" value="/" />			
+			<property name="successUrl" value="/main/index" />
+			<property name="unauthorizedUrl" value="/login_toLogin" />			
+			<property name="filterChainDefinitions">
+				<value>
+					/MP**						= anon
+					/static**/**/** 			= anon
+					/static/images/** 			= anon
+					/static/upload**/** 		= anon
+					/static/bootstrap/** 		= anon
+					/static/js/myjs/** 			= authc
+					/static/js/** 				= anon
+					/static/css/** 				= anon
+					/static/mobile/** 			= anon
+					/static/zyupload/** 		= anon
+					/static/jquery/** 		    = anon
+					/uploadFiles/**/**/**    	= anon
+					/upload**/** 				= anon
+					/code    					= anon
+					/login_login	 			= anon
+					/app**/** 					= anon
+					/weixin/** 					= anon					
+					/mobile/login				= anon
+					/traveler/regist    	    = anon
+					/traveler/login     	    = anon
+					/traveler/fp_slide          = anon
+					/traveler/fp_special        = anon
+					/traveler/fp_art            = anon
+					/traveler/fp_tour           = anon
+					/traveler/kp_tour_slide     = anon
+					/traveler/kp_sp_slide       = anon
+					/traveler/kp_sa_slide       = anon
+					/traveler/kp_sa_list        = anon
+					/traveler/kp_sn_slide       = anon
+					/traveler/kp_sits_list      = anon
+					/traveler/kp_sn_detail      = anon
+					/traveler/**         	    = anon
+					/mobile/**				    = anon					
+					/**							= authc
+				</value>
+			</property>
+		</bean>
+	<!-- ================ Shiro end ================ -->
+	
+</beans>

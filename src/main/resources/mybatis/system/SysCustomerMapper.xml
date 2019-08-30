@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysCustomerMapper">
+	
+	<resultMap type="SysCustomer" id="SysCustomerMap">
+		<id column="ID" property="ID"/>		
+		<result column="NAME" property="NAME"/>
+		<result column="LG_ID" property="LG_ID"/>
+		<result column="PASS" property="PASS"/>
+		<result column="EMAIL" property="EMAIL"/>
+		<result column="TEL" property="TEL"/>
+		<result column="ADDRESS" property="ADDRESS"/>
+		<result column="SEX" property="SEX"/>
+		<result column="BIRTHDAY" property="BIRTHDAY"/>
+		<result column="AVATAR" property="AVATAR"/>
+		<result column="STATE" property="STATE"/>
+	</resultMap>
+	<sql id="tableName">
+		sys_customer
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		ID,
+		NAME,
+		LG_ID,
+		PASS,
+		EMAIL,
+		TEL,
+		ADDRESS,
+		SEX,
+		BIRTHDAY,
+		AVATAR,
+		STATE
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{LG_ID},
+		#{PASS},
+		#{EMAIL},
+		#{TEL},
+		#{ADDRESS},
+		#{SEX},
+		#{BIRTHDAY},
+		#{AVATAR},
+		#{STATE}
+	</sql>	
+	
+	<select id="customerlistPage" parameterType="page" resultType="pd" >
+		SELECT  * FROM `sys_customer` 		
+		WHERE 1 = 1
+		<if test="pd.LG_ID != null and pd.LG_ID != ''">
+		    AND `sys_customer`.LG_ID LIKE CONCAT(CONCAT('%', #{pd.LG_ID}), '%')
+		</if>
+		<if test="pd.NAME != null and pd.NAME != ''">
+		    AND `sys_customer`.NAME LIKE CONCAT(CONCAT('%', #{pd.NAME}), '%')
+		</if>
+		<if test="pd.TEL != null and pd.TEL != ''">
+		    AND `sys_customer`.TEL LIKE CONCAT(CONCAT('%', #{pd.TEL}), '%')
+		</if>
+	</select>
+	
+	<delete id="deleteCustomer" parameterType="pd" flushCache="false">
+		DELETE from <include refid="tableName"></include>
+		WHERE 
+			ID = #{ID}
+	</delete>
+</mapper>

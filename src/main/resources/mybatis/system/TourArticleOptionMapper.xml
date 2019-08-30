@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TourArticleOptionMapper">
+
+	<resultMap type="TourArticleOption" id="tourArticleOptionResultMap">
+	    <id column="ID" property="ID"/>
+		<result column="ARTICLE_ID" property="ARTICLE_ID"/>		
+		<result column="OPTION" property="OPTION"/>
+		<result column="VAL" property="VAL"/>
+	</resultMap>
+	
+	<sql id="tableName">
+		tour_article_option
+	</sql>	
+	
+	<sql id="Field">
+	    ID,
+		ARTICLE_ID,
+		OPTION,
+		VAL
+	</sql>
+	
+	<sql id="FieldValue">
+	    #{ID},
+		#{ARTICLE_ID},
+		#{OPTION},
+		#{VAL}
+	</sql>
+	
+	<select id="tAOptionList" parameterType="pd" resultType="pd" >
+		SELECT `OPTION`, `VAL` FROM `tour_article_option` WHERE `ARTICLE_ID` = #{ID};
+	</select>
+	<select id="checkITem" parameterType="pd" resultType="pd" >
+		SELECT 
+			<include refid="Field"></include>
+		FROM 
+			<include refid="tableName"></include>
+		WHERE 
+			`ARTICLE_ID` = #{ARTICLE_ID}
+		AND
+			`OPTION` = #{OPTION}
+		AND
+			`VAL` = #{VAL}
+	</select>
+	<insert id="saveTAOption" parameterType="pd" >
+		INSERT INTO `tour_article_option`(`ID`, `ARTICLE_ID`, `OPTION`, `VAL`) VALUES (UUID(), #{ARTICLE_ID}, #{OPTION}, #{VAL});
+	</insert>
+	<delete id="deleTAOption" parameterType="pd" flushCache="false">
+		DELETE FROM `tour_article_option` WHERE `ARTICLE_ID` = #{ARTICLE_ID};
+	</delete>
+	
+</mapper>

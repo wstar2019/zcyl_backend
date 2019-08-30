@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FPSlidingMapper">
+	
+	<resultMap type="FPSliding" id="FPSlidingMap">
+		<id column="ID" property="ID"/>
+		<result column="NAME" property="NAME"/>
+		<result column="COMMENT" property="COMMENT"/>
+		<result column="VIEW_TYPE" property="VIEW_TYPE"/>
+		<result column="STATE" property="STATE"/>		
+	</resultMap>
+	
+	<sql id="tableName">
+		FP_SLIDING
+	</sql>
+	
+	<sql id="Field">
+		ID,
+		NAME,
+		COMMENT,
+		VIEW_TYPE,
+		STATE		
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{COMMENT},
+		#{VIEW_TYPE},
+		#{STATE}
+	</sql>	
+	
+	<select id="fpslidinglistPage" parameterType="page" resultType="pd" >
+		SELECT  *				
+		FROM <include refid="tableName"></include> WHERE 1=1 
+		<if test="pd.COMMENT != null and pd.COMMENT != ''">
+			AND `COMMENT` LIKE CONCAT(CONCAT('%', #{pd.COMMENT}), '%')					 
+		</if>
+		<if test="pd.STATE != null and pd.STATE != ''">
+			AND `STATE` = #{pd.STATE}					 
+		</if>
+		ORDER BY `NAME`
+		
+	</select>	
+	<select id="fpSlideAll" parameterType="page" resultType="pd" >
+		SELECT  *				
+		FROM <include refid="tableName"></include> WHERE `STATE` = '1'
+		ORDER BY `NAME`
+		
+	</select>
+	<update id="updateFPSlide" parameterType="pd" >
+		update  <include refid="tableName"></include>
+			set NAME				= #{NAME},
+				COMMENT				= #{COMMENT},
+				VIEW_TYPE			= #{VIEW_TYPE},
+				STATE				= #{STATE}			
+			WHERE 
+				ID = #{ID}
+	</update>
+	
+	<insert id="saveFPSlide" parameterType="pd" >
+		insert into <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) values (
+			#{ID},
+			#{NAME},
+			#{COMMENT},
+			#{VIEW_TYPE},
+			#{STATE}
+		)
+	</insert>
+	
+	<delete id="deleteFPSlide" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE ID = #{ID}
+	</delete>
+</mapper>

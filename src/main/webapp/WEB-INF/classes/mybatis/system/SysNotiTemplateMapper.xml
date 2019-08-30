@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysNotiTemplateMapper">
+	
+	<resultMap type="SysNotiTemplate" id="SysNotiTemplateMap">
+		<id column="ID" property="ID"/>		
+		<result column="NAME" property="NAME"/>
+		<result column="AUTO_SEND" property="AUTO_SEND"/>
+		<result column="KIND" property="KIND"/>
+		<result column="CONTENT" property="CONTENT"/>
+		<result column="TEMP" property="TEMP"/>
+		<result column="STATE" property="STATE"/>
+		<result column="REG_TIME" property="REG_TIME"/>
+		<result column="REG_MAN" property="REG_MAN"/>
+		<result column="SEND_TIME" property="SEND_TIME"/>
+	</resultMap>
+	<sql id="tableName">
+		sys_noti_template
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		ID,
+		NAME,
+		AUTO_SEND,
+		KIND,
+		CONTENT,
+		TEMP,
+		STATE,
+		REG_TIME,
+		REG_MAN,
+		SEND_TIME
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{NAME},
+		#{AUTO_SEND},
+		#{KIND},
+		#{CONTENT},
+		#{TEMP},
+		#{STATE},
+		#{REG_TIME},
+		#{REG_MAN},
+		#{SEND_TIME}
+	</sql>	
+	
+	<update id="sendNotify" parameterType="pd" >
+		UPDATE  <include refid="tableName"></include>
+		SET STATE = #{STATE}, SEND_TIME = #{SEND_TIME} 			
+		WHERE ID = #{ID}
+	</update>
+	<select id="notiTemplatelistPage" parameterType="page" resultType="pd" >
+		SELECT
+			ID,
+			NAME,
+			KIND,
+			STATE,
+			REG_TIME,
+			SEND_TIME
+		FROM <include refid="tableName"></include>
+		WHERE 1 = 1
+		<if test="pd.NAME != null and pd.NAME != ''">
+		    AND `NAME` LIKE CONCAT(CONCAT('%', #{pd.NAME}), '%')
+		</if>
+		<if test="pd.STATE != null and pd.STATE != ''">
+		    AND `STATE` = #{pd.STATE}
+		</if>
+		<if test="pd.KIND != null and pd.KIND != ''">
+		    AND `KIND` = #{pd.KIND}
+		</if>
+		<if test="pd.RS_TIME != null and pd.RS_TIME != ''">
+		    AND `REG_TIME` &gt;= #{pd.RS_TIME}
+		</if>
+		<if test="pd.RE_TIME != null and pd.RE_TIME != ''">
+		    AND `REG_TIME` &lt;= #{pd.RE_TIME}
+		</if>
+		<if test="pd.SS_TIME != null and pd.SS_TIME != ''">
+		    AND `SEND_TIME` &gt;= #{pd.SS_TIME}
+		</if>
+		<if test="pd.SE_TIME != null and pd.SE_TIME != ''">
+		    AND `SEND_TIME` &lt;= #{pd.SE_TIME}
+		</if>
+	</select>
+	
+	<insert id="saveNotiTemplate" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES (
+			#{ID},
+			#{NAME},
+			#{AUTO_SEND},
+			#{KIND},
+			#{CONTENT},
+			#{TEMP},
+			#{STATE},
+			#{REG_TIME},
+			#{REG_MAN},
+			#{SEND_TIME}
+		)
+	</insert>
+	
+	<select id="getNotiTemplateInfo" parameterType="pd" resultType="pd">
+		SELECT <include refid="Field"></include>
+		FROM <include refid="tableName"></include> 	
+		WHERE 1=1
+		AND ID = #{ID}
+	</select>
+	
+	<delete id="deleteNotiTemplate" parameterType="pd" flushCache="false">
+		DELETE FROM <include refid="tableName"></include>
+		WHERE 
+			ID = #{ID}
+	</delete>
+</mapper>

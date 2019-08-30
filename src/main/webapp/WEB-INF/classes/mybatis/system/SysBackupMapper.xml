@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SysBackupMapper">
+	
+	<resultMap type="SysBackup" id="SysBackupMap">
+		<id column="ID" property="ID"/>		
+		<result column="FILE" property="FILE"/>
+		<result column="CREATE_TIME" property="CREATE_TIME"/>
+		<result column="OPERATOR" property="OPERATOR"/>
+	</resultMap>
+	<sql id="tableName">
+		sys_backup
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		ID,
+		FILE,
+		CREATE_TIME,
+		OPERATOR
+	</sql>
+	
+	<sql id="FieldValue">
+		#{ID},
+		#{FILE},
+		#{CREATE_TIME},
+		#{OPERATOR}
+	</sql>	
+	
+	<select id="backuplistPage" parameterType="page" resultType="pd" >
+		SELECT  * FROM `sys_backup` 		
+		WHERE 1 = 1
+		<if test="pd.OPERATOR != null and pd.OPERATOR != ''">
+		    AND `sys_backup`.OPERATOR LIKE CONCAT(CONCAT('%', #{pd.OPERATOR}), '%')
+		</if>
+		<if test="pd.S_TIME != null and pd.S_TIME != ''">
+		    AND `sys_backup`.CREATE_TIME &gt;= #{pd.S_TIME}
+		</if>
+		<if test="pd.E_TIME != null and pd.E_TIME != ''">
+		    AND `sys_backup`.CREATE_TIME &lt;= #{pd.E_TIME}
+		</if>
+		ORDER BY `sys_backup`.CREATE_TIME ASC
+	</select>
+	
+	<insert id="saveBackup" parameterType="pd" >
+		INSERT INTO <include refid="tableName"></include> (
+			<include refid="Field"></include>
+		) VALUES  (
+			#{ID},
+			#{FILE},
+			#{CREATE_TIME},
+			#{OPERATOR}
+		)
+	</insert>
+	
+	<select id="getBackupInfo" parameterType="pd" resultType="pd">
+		SELECT  c.ID,
+				c.FILE,
+				c.CREATE_TIME,
+				c.OPERATOR
+		FROM <include refid="tableName"></include> c 	
+		WHERE 1=1
+		AND ID = #{ID}
+	</select>
+	
+	<delete id="deleteBackup" parameterType="pd" flushCache="false">
+		DELETE from <include refid="tableName"></include>
+		WHERE 
+			ID = #{ID}
+	</delete>
+</mapper>

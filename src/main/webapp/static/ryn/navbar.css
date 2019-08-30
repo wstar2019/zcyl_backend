@@ -1,0 +1,68 @@
+.navbar {
+    background: #06F;
+    position: relative;
+    margin-bottom: 0px;
+  }
+
+  .navbar .container-fluid {
+    background: #AAA;
+    background: -webkit-linear-gradient(#AAA, #C9C9C9);
+    background: -o-linear-gradient(#AAA, #C9C9C9);
+    background: -moz-linear-gradient(#AAA, #C9C9C9);
+    background: linear-gradient(#AAA, #C9C9C9);
+  }
+  .navbar a {
+    color:#06E !important;
+  }
+  .navbar-brand {
+    height: 30px;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 20px;
+    color: #333 !important;
+  }
+
+  .navbar>.container-fluid .navbar-brand {
+    margin-left: 150px;
+  }
+
+  .navbar-right {
+    margin-right: 100px;
+  }
+   .navbar-right>li>a{
+   	cursor:pointer;
+   }
+
+  .navbar-nav>li>a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .navbar .container .img{
+    height:80px;
+  }
+  .navbar .container .img,
+  .navbar .container .title {
+    float: left;
+  }
+
+  .navbar-nav>li>a,
+  .navbar-nav>li>.img {
+    float: left;
+  }
+
+  .navbar-nav>li>.img {
+    padding-top: 12px;
+    padding-bottom:11px;
+  }
+  
+  .navbar .title{
+    font-family: "华文彩云 Bold","华文彩云 Regular","华文彩云";
+    font-weight: 700;
+    font-style: normal;
+    color: #FFF;
+    font-size: 32px;
+  }
+  .navbar .title p{
+    padding: 15px;
+    margin: 0px;
+  }
